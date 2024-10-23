@@ -50,3 +50,4 @@
 * AWS beanstalk 
 * Netlify 
 # nuna-shopping-mall-front
+# nuna-shopping-mall-front
