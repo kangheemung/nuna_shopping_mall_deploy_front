@@ -29,6 +29,7 @@ const RegisterPage = () => {
       setPasswordError("비밀번호 중복확인이 일치하지 않습니다.");
       return;
     }
+    //이용약관 동의
     if (!policy) {
       setPolicyError(true);
       return;

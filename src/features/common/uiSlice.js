@@ -4,7 +4,7 @@ const initialState = {
   toastMessage: { message: "", status: "" },
   // 'success', 'error', 'warning'
 };
-
+//토스트 메세지
 const uiSlice = createSlice({
   name: "ui",
   initialState,
