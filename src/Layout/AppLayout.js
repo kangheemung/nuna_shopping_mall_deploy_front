@@ -15,7 +15,7 @@ const AppLayout = ({ children }) => {
   const { user } = useSelector((state) => state.user);
   useEffect(() => {
     dispatch(loginWithToken());
-  }, []);
+  }, []);//login_check
   useEffect(() => {
     if (user) {
       dispatch(getCartQty());

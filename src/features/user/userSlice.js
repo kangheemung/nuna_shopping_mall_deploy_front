@@ -6,10 +6,11 @@ import { initialCart } from '../cart/cartSlice';
 
 export const loginWithEmail = createAsyncThunk(
     'user/loginWithEmail',
-    async ({ email, password }, { dispatch, rejectWithValue }) => {
+    async ({ email, password }, { rejectWithValue }) => {
         try {
             const res = await api.post('/auth/login', { email, password });
-
+            // 1.localStorage 웹사이트 꺼져도 유지 2.SessionStorage 새로고침 하면 유지 안됨
+            sessionStorage.setItem('token', res.data.token);
             // dispatch(
             //     //성공
             //     showToastMessage({
@@ -19,9 +20,9 @@ export const loginWithEmail = createAsyncThunk(
             // );
             // navigate('/');
             return res.data;
-        } catch (err) {
+        } catch (error) {
             // dispatch(showToastMessage({ message: 'Login failed.!', status: 'error' }));
-            return rejectWithValue(err.error);
+            return rejectWithValue(error.error);
         }
     }
 );
@@ -34,7 +35,6 @@ export const loginWithGoogle = createAsyncThunk('user/loginWithGoogle', async (t
     }
 });
 
-export const logout = () => (dispatch) => {};
 //회원가입
 export const registerUser = createAsyncThunk(
     'user/registerUser',
@@ -52,16 +52,23 @@ export const registerUser = createAsyncThunk(
             //2.리다이렉스 로그인 페이지
             navigate('/login');
             return res.data.data;
-        } catch (e) {
+        } catch (error) {
             //실페 메세지
             //2. 에러값 저장
             dispatch(showToastMessage({ message: '회원가입을  실패했습니다.!', status: 'error' }));
-            return rejectWithValue(e.error);
+            return rejectWithValue(error.error);
         }
     }
 );
-
-export const loginWithToken = createAsyncThunk('user/loginWithToken', async (_, { rejectWithValue }) => {});
+//토근 가지고 오기 누구의 토큰인지 확인
+export const loginWithToken = createAsyncThunk('user/loginWithToken', async (_, { rejectWithValue }) => {
+    try {
+        const res = await api.get('user/me');
+        return res.data;
+    } catch (err) {
+        return rejectWithValue(err.error);
+    }
+});
 
 const userSlice = createSlice({
     name: 'user',
@@ -105,7 +112,13 @@ const userSlice = createSlice({
             .addCase(loginWithEmail.rejected, (state, action) => {
                 state.loading = false;
                 state.loginError = action.payload;
+            })
+            // .addCase(loginWithToken.pending)(state,action)=>{}
+            .addCase(loginWithToken.fulfilled, (state, action) => {
+                state.user = action.payload.user; //유저값 세팅
             });
+        //             .addCase(loginWithToken.rejected,(state,action) => {
+        // )
     },
 });
 export const { clearErrors } = userSlice.actions;
