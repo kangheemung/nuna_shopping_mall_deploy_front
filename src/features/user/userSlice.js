@@ -63,7 +63,7 @@ export const registerUser = createAsyncThunk(
 //토근 가지고 오기 누구의 토큰인지 확인
 export const loginWithToken = createAsyncThunk('user/loginWithToken', async (_, { rejectWithValue }) => {
     try {
-        const res = await api.get('user/me');
+        const res = await api.get('/user/me');
         return res.data;
     } catch (error) {
         rejectWithValue(error.error);
