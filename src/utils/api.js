@@ -7,7 +7,7 @@ const LOCAL_BACKEND = process.env.REACT_APP_BACKEND_PROXY;
 const api = axios.create({
     baseURL: LOCAL_BACKEND,
     headers: {
-        'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
         authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },
 });
@@ -22,6 +22,8 @@ api.interceptors.request.use(
     },
     function (error) {
         console.log('REQUEST ERROR', error);
+        
+
     }
 );
 

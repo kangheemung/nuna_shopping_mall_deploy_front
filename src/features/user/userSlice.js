@@ -22,7 +22,7 @@ export const loginWithEmail = createAsyncThunk(
             return res.data;
         } catch (error) {
             // dispatch(showToastMessage({ message: 'Login failed.!', status: 'error' }));
-            return rejectWithValue(error.error);
+            return rejectWithValue(error.response?.data || error.message);
         }
     }
 );
@@ -65,8 +65,8 @@ export const loginWithToken = createAsyncThunk('user/loginWithToken', async (_, 
     try {
         const res = await api.get('user/me');
         return res.data;
-    } catch (err) {
-        return rejectWithValue(err.error);
+    } catch (error) {
+        rejectWithValue(error.error);
     }
 });
 
@@ -83,6 +83,10 @@ const userSlice = createSlice({
         clearErrors: (state) => {
             state.loginError = null;
             state.registrationError = null;
+        },
+        logout: (state) => {
+            state.user = null;
+            state.loginError = null;
         },
     },
     //밖에서 호출 한거여
@@ -111,7 +115,7 @@ const userSlice = createSlice({
             })
             .addCase(loginWithEmail.rejected, (state, action) => {
                 state.loading = false;
-                state.loginError = action.payload;
+                state.loginError = action.payload || '로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요';
             })
             // .addCase(loginWithToken.pending)(state,action)=>{}
             .addCase(loginWithToken.fulfilled, (state, action) => {

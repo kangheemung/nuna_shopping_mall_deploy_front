@@ -21,9 +21,13 @@ const Login = () => {
         if (loginError) {
             dispatch(clearErrors());
         }
-    }, [navigate, loginError, dispatch]);
+    }, [ dispatch]);
     const handleLoginWithEmail = (event) => {
         event.preventDefault();
+        if (email.trim() === '' || password.trim() === '') {
+            alert('Email and password are required to log in.');
+            return;
+        }
         dispatch(loginWithEmail({ email, password }));
     };
 
@@ -32,9 +36,15 @@ const Login = () => {
         dispatch(loginWithGoogle(googleData.credential));
     };
 
-    if (user) {
-        navigate('/');
-    }
+    useEffect(() => {
+        if (user) {
+            // Redirect to the main page upon successful login
+            navigate('/');
+
+            // Save token information to session or local storage upon successful login
+            // Example: localStorage.setItem('token', user.token);
+        }
+    }, [user, navigate]);
     return (
         <>
             <Container className="login-area">
