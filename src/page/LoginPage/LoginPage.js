@@ -19,9 +19,13 @@ const Login = () => {
     const { loginError } = useSelector((state) => state.user);
     useEffect(() => {
         if (loginError) {
-            dispatch(clearErrors());
+            const timeout = setTimeout(() => {
+                dispatch(clearErrors());
+            }, 5000); // Clear error after 5 seconds (adjust as needed)
+
+            return () => clearTimeout(timeout); // Clear timeout on component unmount
         }
-    }, [ dispatch]);
+    }, [loginError, dispatch]);
     const handleLoginWithEmail = (event) => {
         event.preventDefault();
         if (email.trim() === '' || password.trim() === '') {
