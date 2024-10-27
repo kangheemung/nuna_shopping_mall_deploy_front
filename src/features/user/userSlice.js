@@ -11,17 +11,17 @@ export const loginWithEmail = createAsyncThunk(
             const res = await api.post('/auth/login', { email, password });
             // 1.localStorage 웹사이트 꺼져도 유지 2.SessionStorage 새로고침 하면 유지 안됨
             sessionStorage.setItem('token', res.data.token);
-            // dispatch(
-            //     //성공
-            //     showToastMessage({
-            //         message: 'Your membership login was successful!',
-            //         status: 'success',
-            //     })
-            // );
+            dispatch(
+                //성공
+                showToastMessage({
+                    message: 'Your membership login was successful!',
+                    status: 'success',
+                })
+            );
             // navigate('/');
             return res.data;
         } catch (error) {
-            // dispatch(showToastMessage({ message: 'Login failed.!', status: 'error' }));
+            dispatch(showToastMessage({ message: 'Login failed.!', status: 'error' }));
             return rejectWithValue(error.response?.data || error.message);
         }
     }
