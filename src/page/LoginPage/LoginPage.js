@@ -22,7 +22,6 @@ const Login = () => {
             const timeout = setTimeout(() => {
                 dispatch(clearErrors());
             }, 5000); // Clear error after 5 seconds (adjust as needed)
-
             return () => clearTimeout(timeout); // Clear timeout on component unmount
         }
     }, [loginError, dispatch]);
@@ -40,15 +39,10 @@ const Login = () => {
         dispatch(loginWithGoogle(googleData.credential));
     };
 
-    useEffect(() => {
-        if (user) {
-            // Redirect to the main page upon successful login
-            navigate('/');
-
-            // Save token information to session or local storage upon successful login
-            // Example: localStorage.setItem('token', user.token);
-        }
-    }, [user, navigate]);
+    if (user) {
+        // Redirect to the main page upon successful login
+        navigate('/');
+    }
     return (
         <>
             <Container className="login-area">

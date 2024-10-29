@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { clearErrors } from '../redux/userSlice';
+
 import './style/register.style.css';
 
 import { registerUser } from '../../features/user/userSlice';
@@ -20,7 +20,6 @@ const RegisterPage = () => {
     const [passwordError, setPasswordError] = useState('');
     const [policyError, setPolicyError] = useState(false);
     const { registrationError } = useSelector((state) => state.user);
-
     const register = (event) => {
         event.preventDefault();
         const { name, email, password, confirmPassword, policy } = formData;
@@ -29,12 +28,7 @@ const RegisterPage = () => {
             setPasswordError('비밀번호 중복확인이 일치하지 않습니다.');
             return;
         }
-        useEffect(() => {
-            return () => {
-                // Clear registration errors when leaving the registration page
-                dispatch(clearErrors());
-            };
-        }, [dispatch]);
+
         //이용약관 동의
         if (!policy) {
             setPolicyError(true);
