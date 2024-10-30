@@ -7,7 +7,7 @@ export const loginWithEmail = createAsyncThunk(
     'user/loginWithEmail',
     async ({ email, password }, { rejectWithValue }) => {
         try {
-            const res = await api.post('auth/login', { email, password });
+            const res = await api.post('/auth/login', { email, password });
             // 1.localStorage 웹사이트 꺼져도 유지 2.SessionStorage 새로고침 하면 유지 안됨
             sessionStorage.setItem('token', res.data.token);
             // navigate('/');
@@ -18,7 +18,7 @@ export const loginWithEmail = createAsyncThunk(
     }
 );
 
-export const loginWithGoogle = createAsyncThunk('user/loginWithGoogle', async (token, { rejectWithValue }) => {
+export const loginWithGoogle = createAsyncThunk('/user/loginWithGoogle', async (token, { rejectWithValue }) => {
     try {
         // Add logic to handle Google login here
     } catch (error) {
@@ -52,7 +52,7 @@ export const registerUser = createAsyncThunk(
     }
 );
 //토근 가지고 오기 누구의 토큰인지 확인
-export const loginWithToken = createAsyncThunk('user/loginWithToken', async (_, { rejectWithValue }) => {
+export const loginWithToken = createAsyncThunk('/user/loginWithToken', async (_, { rejectWithValue }) => {
     try {
         const res = await api.get('/user/me');
         return res.data;
