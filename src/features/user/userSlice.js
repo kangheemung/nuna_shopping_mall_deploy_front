@@ -55,11 +55,19 @@ export const registerUser = createAsyncThunk(
 export const loginWithToken = createAsyncThunk('/user/loginWithToken', async (_, { rejectWithValue }) => {
     try {
         const res = await api.get('/user/me');
+        sessionStorage.setItem('token', res.data.token);
         return res.data;
     } catch (error) {
-        rejectWithValue(error.error);
+        return rejectWithValue(error.error);
     }
 });
+//logout
+
+export const logout = ({ dispatch, navigate }) => {
+    sessionStorage.removeItem('token');
+    dispatch(showToastMessage({ message: 'logout_sucess!', status: 'success' }));
+    navigate('/login');
+};
 
 const userSlice = createSlice({
     name: 'user',
@@ -71,6 +79,9 @@ const userSlice = createSlice({
         success: false,
     },
     reducers: {
+        setUserFromToken: (state) => {
+            const token = sessionStorage.getItem('token');
+        },
         clearErrors: (state) => {
             state.loginError = null;
             state.registrationError = null;
@@ -109,11 +120,13 @@ const userSlice = createSlice({
                 state.loginError = action.payload || '로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요';
             })
             // .addCase(loginWithToken.pending)(state,action)=>{}
+
             .addCase(loginWithToken.fulfilled, (state, action) => {
-                state.user = action.payload.user; //유저값 세팅
+                state.user = action.payload.user;
+            })
+            .addCase(loginWithToken.rejected, (state, action) => {
+                state.user = action.payload.user;
             });
-        //             .addCase(loginWithToken.rejected,(state,action) => {
-        // )
     },
 });
 export const { clearErrors } = userSlice.actions;

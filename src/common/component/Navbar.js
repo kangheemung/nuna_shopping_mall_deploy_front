@@ -5,6 +5,7 @@ import { faBars, faBox, faSearch, faShoppingBag } from '@fortawesome/free-solid-
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { logout } from '../../features/user/userSlice';
 
 const Navbar = ({ user }) => {
@@ -23,7 +24,9 @@ const Navbar = ({ user }) => {
             navigate(`?name=${event.target.value}`);
         }
     };
-    const handleLogout = () => {};
+    const handleLogout = () => {
+        dispatch({ logout });
+    };
     return (
         <div>
             {showSearchBox && (
