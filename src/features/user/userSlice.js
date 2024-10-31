@@ -13,7 +13,9 @@ export const loginWithEmail = createAsyncThunk(
             // navigate('/');
             return res.data;
         } catch (error) {
-            return rejectWithValue(error.response?.data || error.message);
+            console.error('Login with email failed:', error);
+
+            return rejectWithValue(error.error);
         }
     }
 );
@@ -52,7 +54,8 @@ export const registerUser = createAsyncThunk(
     }
 );
 //토근 가지고 오기 누구의 토큰인지 확인
-export const loginWithToken = createAsyncThunk('/user/loginWithToken', async (_, { rejectWithValue }) => {
+export const loginWithToken = createAsyncThunk('/user/loginWithToken',
+ async (_, { rejectWithValue }) => {
     try {
         const res = await api.get('/user/me');
         return res.data;
@@ -78,9 +81,6 @@ const userSlice = createSlice({
         success: false,
     },
     reducers: {
-        setUserFromToken: (state) => {
-            const token = sessionStorage.getItem('token');
-        },
         clearErrors: (state) => {
             state.loginError = null;
             state.registrationError = null;

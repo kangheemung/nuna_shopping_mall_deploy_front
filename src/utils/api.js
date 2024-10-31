@@ -8,7 +8,7 @@ const api = axios.create({
     baseURL: LOCAL_BACKEND,
     headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+        authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },
 });
 /**
@@ -16,14 +16,18 @@ const api = axios.create({
  */
 api.interceptors.request.use(
     (request) => {
-        console.log('Starting Request', request);
-        if (sessionStorage.getItem('token')) {
-            request.headers.Authorization = `Bearer ${sessionStorage.getItem('token')}`;
+        const token = sessionStorage.getItem('token');
+        if (token) {
+            request.headers.authorization = `Bearer ${token}`;
         }
+        console.log('Starting Request', request);
+        console.log('Request Data:', request.data);
+
         return request;
     },
     function (error) {
         console.log('REQUEST ERROR', error);
+        return Promise.reject(error);
     }
 );
 

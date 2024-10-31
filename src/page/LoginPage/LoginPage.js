@@ -24,7 +24,7 @@ const Login = () => {
             }, 5000); // Clear error after 5 seconds (adjust as needed)
             return () => clearTimeout(timeout); // Clear timeout on component unmount
         }
-    }, [loginError, dispatch]);
+    }, [navigate, loginError, dispatch]);
     const handleLoginWithEmail = (event) => {
         event.preventDefault();
         if (email.trim() === '' || password.trim() === '') {

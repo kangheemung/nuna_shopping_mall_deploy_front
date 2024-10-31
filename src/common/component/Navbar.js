@@ -25,7 +25,7 @@ const Navbar = ({ user }) => {
         }
     };
     const handleLogout = () => {
-        dispatch({ logout });
+        dispatch(logout({ dispatch, navigate }));
     };
     return (
         <div>
