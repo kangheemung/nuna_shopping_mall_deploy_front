@@ -55,7 +55,6 @@ export const registerUser = createAsyncThunk(
 export const loginWithToken = createAsyncThunk('/user/loginWithToken', async (_, { rejectWithValue }) => {
     try {
         const res = await api.get('/user/me');
-        sessionStorage.setItem('token', res.data.token);
         return res.data;
     } catch (error) {
         return rejectWithValue(error.error);
