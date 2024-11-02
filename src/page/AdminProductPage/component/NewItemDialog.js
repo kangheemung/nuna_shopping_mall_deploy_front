@@ -82,7 +82,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
     const handleSizeChange = (value, index) => {
         //  재고 사이즈 변환하기
-        // [[l,3],[m,4],[xl,5]]
+        // [[s,3],[m,4],[xl,5]]
         const newStock = [...stock];
         newStock[index][0] = value;
         setStock(newStock);
