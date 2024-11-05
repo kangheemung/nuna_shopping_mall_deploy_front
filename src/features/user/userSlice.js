@@ -54,8 +54,7 @@ export const registerUser = createAsyncThunk(
     }
 );
 //토근 가지고 오기 누구의 토큰인지 확인
-export const loginWithToken = createAsyncThunk('/user/loginWithToken',
- async (_, { rejectWithValue }) => {
+export const loginWithToken = createAsyncThunk('/user/loginWithToken', async (_, { rejectWithValue }) => {
     try {
         const res = await api.get('/user/me');
         return res.data;
@@ -74,7 +73,7 @@ export const logout = ({ dispatch, navigate }) => {
 const userSlice = createSlice({
     name: 'user',
     initialState: {
-        user: null,
+        user: {},
         loading: false,
         loginError: null,
         registrationError: null,
@@ -82,7 +81,7 @@ const userSlice = createSlice({
     },
     reducers: {
         clearErrors: (state) => {
-            state.loginError = null;
+            state.user = {};
             state.registrationError = null;
         },
         logout: (state) => {
@@ -97,9 +96,12 @@ const userSlice = createSlice({
             .addCase(registerUser.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(registerUser.fulfilled, (state) => {
+            .addCase(registerUser.fulfilled, (state, action) => {
                 state.loading = false;
-                state.registrationError = null;
+                if (action.payload && action.payload.user) {
+                    state.user = action.payload.user;
+                    state.loginError = null;
+                }
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.registrationError = action.payload;
