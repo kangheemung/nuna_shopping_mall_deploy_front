@@ -53,8 +53,8 @@ const AdminProductPage = () => {
 
   const handleClickNewItem = () => {
     //new 모드로 설정하고
-    // 다이얼로그 열어주기
     setMode("new");
+     // 다이얼로그 열어주기
     setShowDialog(true);
   };
 
