@@ -53,11 +53,19 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        console.log('form data', formData);
+        console.log('stock', stock);
         //재고를 입력했는지 확인, 아니면 에러
+        if (stock.length === 0) return setStockError(true);
         // 재고를 배열에서 객체로 바꿔주기
+        const totalStock=stock.reduce((total,item)=>{
+            return{...total,[item[0]]:parseInt(item[1])}
+        },{})
+        console.log("formdata",totalStock)
         // [['M',2]] 에서 {M:2}로
         if (mode === 'new') {
             //새 상품 만들기
+            dispatch(createProduct({...formData,stock: totalStock}))
         } else {
             // 상품 수정하기
         }
@@ -96,6 +104,8 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     };
 
     const onHandleCategory = (event) => {
+        //카테고리가 이미 추가 있으면 제거
+
         if (formData.category.includes(event.target.value)) {
             const newCategory = formData.category.filter((item) => item !== event.target.value);
             setFormData({
@@ -103,6 +113,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
                 category: [...newCategory],
             });
         } else {
+            //아니면 새로 추가
             setFormData({
                 ...formData,
                 category: [...formData.category, event.target.value],
