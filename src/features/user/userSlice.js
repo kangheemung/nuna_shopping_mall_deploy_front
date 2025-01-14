@@ -9,9 +9,13 @@ export const loginWithEmail = createAsyncThunk(
         try {
             const res = await api.post('/auth/login', { email, password });
             // 1.localStorage 웹사이트 꺼져도 유지 2.SessionStorage 새로고침 하면 유지 안됨
-            sessionStorage.setItem('token', res.data.token);
-            // navigate('/');
-            return res.data;
+            if (res && res.data && res.data.token) {
+                sessionStorage.setItem('token', res.data.token);
+                // navigate('/');
+                return res.data;
+            } else {
+                throw new Error('Invalid response data');
+            }
         } catch (error) {
             console.error('Login with email failed:', error);
 
@@ -67,13 +71,14 @@ export const loginWithToken = createAsyncThunk('/user/loginWithToken', async (_,
 export const logout = ({ dispatch, navigate }) => {
     sessionStorage.removeItem('token');
     dispatch(showToastMessage({ message: 'logout_sucess!', status: 'success' }));
+    dispatch(userSlice.actions.logout());
     navigate('/login');
 };
 
 const userSlice = createSlice({
     name: 'user',
     initialState: {
-        user: {},
+        user: null,
         loading: false,
         loginError: null,
         registrationError: null,
@@ -93,6 +98,7 @@ const userSlice = createSlice({
     extraReducers: (builder) => {
         //logingspaner
         builder
+
             .addCase(registerUser.pending, (state) => {
                 state.loading = true;
             })
@@ -106,6 +112,11 @@ const userSlice = createSlice({
             .addCase(registerUser.rejected, (state, action) => {
                 state.registrationError = action.payload;
             })
+            .addCase(loginWithEmail.rejected, (state, action) => {
+                state.loading = false;
+                state.loginError = action.payload || '로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요';
+                state.loginError = null;
+            })
             .addCase(loginWithEmail.pending, (state) => {
                 state.loading = true;
                 //로딩 스핀어 보여주기
@@ -113,20 +124,19 @@ const userSlice = createSlice({
             .addCase(loginWithEmail.fulfilled, (state, action) => {
                 state.loading = false;
                 //로딩 스핀어 끄기
-                state.user = action.payload.user;
+                state.user = action.payload;
                 state.loginError = null;
             })
-            .addCase(loginWithEmail.rejected, (state, action) => {
-                state.loading = false;
-                state.loginError = action.payload || '로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요';
+
+            .addCase(loginWithToken.pending, (state, action) => {
+                state.user = action.payload.user;
             })
-            // .addCase(loginWithToken.pending)(state,action)=>{}
 
             .addCase(loginWithToken.fulfilled, (state, action) => {
                 state.user = action.payload.user;
             })
             .addCase(loginWithToken.rejected, (state, action) => {
-                state.user = action.payload.user;
+                state.user = action.payload;
             });
     },
 });

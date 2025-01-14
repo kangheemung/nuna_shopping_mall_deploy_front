@@ -21,8 +21,9 @@ const Login = () => {
         if (loginError) {
             const timeout = setTimeout(() => {
                 dispatch(clearErrors());
-            }, 5000); // Clear error after 5 seconds (adjust as needed)
-            return () => clearTimeout(timeout); // Clear timeout on component unmount
+                navigate('/login');
+            }, 2000); // Clear error after 5 seconds (adjust as needed)
+            return () => clearTimeout(timeout);
         }
     }, [navigate, loginError, dispatch]);
     const handleLoginWithEmail = (event) => {
