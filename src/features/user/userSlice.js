@@ -5,20 +5,25 @@ import { initialCart } from '../cart/cartSlice';
 
 export const loginWithEmail = createAsyncThunk(
     'user/loginWithEmail',
-    async ({ email, password }, { rejectWithValue }) => {
+    async ({ email, password, navigate }, { rejectWithValue, dispatch }) => {
         try {
             const res = await api.post('/auth/login', { email, password });
             // 1.localStorage 웹사이트 꺼져도 유지 2.SessionStorage 새로고침 하면 유지 안됨
-            if (res && res.data && res.data.token) {
-                sessionStorage.setItem('token', res.data.token);
-                // navigate('/');
-                return res.data;
-            } else {
-                throw new Error('Invalid response data');
-            }
+            //token_save
+            dispatch(
+                showToastMessage({
+                    message: 'Your login was successful!',
+                    status: 'success',
+                })
+            );
+            sessionStorage.setItem('token', res.data.token);
+            return res.data;
         } catch (error) {
             console.error('Login with email failed:', error);
+            dispatch(showToastMessage({ message: 'Login failed. Redirecting to login page.', status: 'error' }));
 
+            dispatch(userSlice.actions.logout());
+            navigate('/login');
             return rejectWithValue(error.error);
         }
     }
@@ -67,14 +72,12 @@ export const loginWithToken = createAsyncThunk('/user/loginWithToken', async (_,
     }
 });
 //logout
-
-export const logout = ({ dispatch, navigate }) => {
+export const logout = (dispatch, navigate) => {
     sessionStorage.removeItem('token');
     dispatch(showToastMessage({ message: 'logout_sucess!', status: 'success' }));
     dispatch(userSlice.actions.logout());
     navigate('/login');
 };
-
 const userSlice = createSlice({
     name: 'user',
     initialState: {
@@ -83,22 +86,25 @@ const userSlice = createSlice({
         loginError: null,
         registrationError: null,
         success: false,
+        email: '', // Add email field to store in Redux state
+        password: '', // Add password field to store in Redux state
     },
     reducers: {
         clearErrors: (state) => {
             state.user = {};
             state.registrationError = null;
+            state.email = ''; // Reset email field to empty string
+            state.password = '';
         },
         logout: (state) => {
+            // Add logic to handle user logout
             state.user = null;
-            state.loginError = null;
         },
     },
     //밖에서 호출 한거여
     extraReducers: (builder) => {
         //logingspaner
         builder
-
             .addCase(registerUser.pending, (state) => {
                 state.loading = true;
             })
@@ -114,8 +120,7 @@ const userSlice = createSlice({
             })
             .addCase(loginWithEmail.rejected, (state, action) => {
                 state.loading = false;
-                state.loginError = action.payload || '로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요';
-                state.loginError = null;
+                state.loginError = action.payload;
             })
             .addCase(loginWithEmail.pending, (state) => {
                 state.loading = true;
@@ -127,18 +132,18 @@ const userSlice = createSlice({
                 state.user = action.payload;
                 state.loginError = null;
             })
-
-            .addCase(loginWithToken.pending, (state, action) => {
-                state.user = action.payload.user;
+            .addCase(loginWithToken.rejected, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
             })
-
             .addCase(loginWithToken.fulfilled, (state, action) => {
                 state.user = action.payload.user;
             })
-            .addCase(loginWithToken.rejected, (state, action) => {
-                state.user = action.payload;
+            .addCase(loginWithToken.pending, (state, action) => {
+                state.user = action.payload.user;
             });
     },
 });
+
 export const { clearErrors } = userSlice.actions;
 export default userSlice.reducer;
