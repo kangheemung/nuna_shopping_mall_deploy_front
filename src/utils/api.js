@@ -14,19 +14,17 @@ const api = axios.create({
 /**
  * console.log all requests and responses
  */
-api.interceptors.request.use(
-    (request) => {
-        const token = sessionStorage.getItem('token');
-        if (token) {
-            request.headers.authorization = `Bearer ${token}`;
+api.interceptors.response.use(
+    (response) => {
+        if (response.data && response.data.status === 'success') {
+            const { user, ...responseDataWithUser } = response.data;
+            console.log('Response Data:', { user });
         }
-        console.log('Starting Request', request);
-        console.log('Request Data:', request.data);
-
-        return request;
+        return response;
     },
     function (error) {
-        console.log('REQUEST ERROR', error);
+        error = error.response.data;
+        console.log('RESPONSE ERROR', error);
         return Promise.reject(error);
     }
 );

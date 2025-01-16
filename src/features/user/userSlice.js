@@ -90,6 +90,9 @@ const userSlice = createSlice({
         password: '', // Add password field to store in Redux state
     },
     reducers: {
+        setUser(state, action) {
+            state.user = action.payload; // Set the user state based on the payload
+        },
         clearErrors: (state) => {
             state.user = {};
             state.registrationError = null;
@@ -98,7 +101,7 @@ const userSlice = createSlice({
         },
         logout: (state) => {
             // Add logic to handle user logout
-            state.user = null;
+            state.user = {};
         },
     },
     //밖에서 호출 한거여

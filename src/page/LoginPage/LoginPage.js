@@ -80,7 +80,6 @@ const Login = () => {
                             아직 계정이 없으세요?<Link to="/register">회원가입 하기</Link>{' '}
                         </div>
                     </div>
-
                     <div className="text-align-center mt-2">
                         <p>-외부 계정으로 로그인하기-</p>
                         <div className="display-center">

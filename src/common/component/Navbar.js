@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 import { faBars, faBox, faSearch, faShoppingBag } from '@fortawesome/free-solid-svg-icons';
@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import userSlice from '../../features/user/userSlice';
-import { logout } from '../../features/user/userSlice';
+import { logout, loginWithToken } from '../../features/user/userSlice';
 
 const Navbar = ({ user }) => {
     const dispatch = useDispatch();
@@ -17,7 +17,6 @@ const Navbar = ({ user }) => {
     const menuList = ['여성', 'Divided', '남성', '신생아/유아', '아동', 'H&M HOME', 'Sale', '지속가능성'];
     let [width, setWidth] = useState(0);
     let navigate = useNavigate();
-
     const onCheckEnter = (event) => {
         if (event.key === 'Enter') {
             if (event.target.value === '') {
@@ -26,10 +25,24 @@ const Navbar = ({ user }) => {
             navigate(`?name=${event.target.value}`);
         }
     };
+
     const handleLogout = () => {
         sessionStorage.removeItem('token');
-        logout(dispatch, navigate);
+        dispatch(logout());
     };
+    const userLevel = user ? user.user.level : '';
+    useEffect(() => {
+        // Check if user is logged in using token
+        dispatch(loginWithToken())
+            .unwrap()
+            .then((userData) => {
+                console.log('User logged in with token:', userData);
+            })
+            .catch((error) => {
+                console.error('Login with token failed:', error);
+            });
+    }, []);
+
     return (
         <div>
             {showSearchBox && (
@@ -56,7 +69,8 @@ const Navbar = ({ user }) => {
                     ))}
                 </div>
             </div>
-            {user && user.level === 'admin' && (
+
+            {userLevel === 'admin' && (
                 <Link to="/admin/product?page=1" className="link-area">
                     Admin page
                 </Link>
@@ -69,30 +83,32 @@ const Navbar = ({ user }) => {
                 <div>
                     <div className="display-flex">
                         {currentUser ? (
-                            <div onClick={handleLogout} className="nav-icon">
-                                <FontAwesomeIcon icon={faUser} />
-                                {!isMobile && <span style={{ cursor: 'pointer' }}>로그아웃</span>}
-                            </div>
+                            <>
+                                <div onClick={handleLogout} className="nav-icon">
+                                    <FontAwesomeIcon icon={faUser} />
+                                    {!isMobile && <span style={{ cursor: 'pointer' }}>로그아웃</span>}
+                                </div>
+                                <div onClick={() => navigate('/cart')} className="nav-icon">
+                                    <FontAwesomeIcon icon={faShoppingBag} />
+                                    {!isMobile && (
+                                        <span style={{ cursor: 'pointer' }}>{`쇼핑백(${cartItemCount || 0})`}</span>
+                                    )}
+                                </div>
+
+                                <div onClick={() => navigate('/account/purchase')} className="nav-icon">
+                                    <FontAwesomeIcon icon={faBox} />
+                                    {!isMobile && <span style={{ cursor: 'pointer' }}>내 주문</span>}
+                                </div>
+                                {isMobile && (
+                                    <div className="nav-icon" onClick={() => setShowSearchBox(true)}>
+                                        <FontAwesomeIcon icon={faSearch} />
+                                    </div>
+                                )}
+                            </>
                         ) : (
                             <div onClick={() => navigate('/login')} className="nav-icon">
                                 <FontAwesomeIcon icon={faUser} />
                                 {!isMobile && <span style={{ cursor: 'pointer' }}>로그인</span>}
-                            </div>
-                        )}
-
-                        <div onClick={() => navigate('/cart')} className="nav-icon">
-                            <FontAwesomeIcon icon={faShoppingBag} />
-                            {!isMobile && <span style={{ cursor: 'pointer' }}>{`쇼핑백(${cartItemCount || 0})`}</span>}
-                        </div>
-
-                        <div onClick={() => navigate('/account/purchase')} className="nav-icon">
-                            <FontAwesomeIcon icon={faBox} />
-                            {!isMobile && <span style={{ cursor: 'pointer' }}>내 주문</span>}
-                        </div>
-
-                        {isMobile && (
-                            <div className="nav-icon" onClick={() => setShowSearchBox(true)}>
-                                <FontAwesomeIcon icon={faSearch} />
                             </div>
                         )}
                     </div>
