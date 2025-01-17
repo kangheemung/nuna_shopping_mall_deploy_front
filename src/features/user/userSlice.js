@@ -100,7 +100,6 @@ const userSlice = createSlice({
             state.password = '';
         },
         logout: (state) => {
-            // Add logic to handle user logout
             state.user = {};
         },
     },
@@ -121,10 +120,6 @@ const userSlice = createSlice({
             .addCase(registerUser.rejected, (state, action) => {
                 state.registrationError = action.payload;
             })
-            .addCase(loginWithEmail.rejected, (state, action) => {
-                state.loading = false;
-                state.loginError = action.payload;
-            })
             .addCase(loginWithEmail.pending, (state) => {
                 state.loading = true;
                 //로딩 스핀어 보여주기
@@ -135,15 +130,19 @@ const userSlice = createSlice({
                 state.user = action.payload;
                 state.loginError = null;
             })
-            .addCase(loginWithToken.rejected, (state, action) => {
+            .addCase(loginWithEmail.rejected, (state, action) => {
                 state.loading = false;
-                state.user = action.payload;
+                state.loginError = action.payload;
+            })
+            .addCase(loginWithToken.pending, (state, action) => {
+                state.user = action.payload.user;
             })
             .addCase(loginWithToken.fulfilled, (state, action) => {
                 state.user = action.payload.user;
             })
-            .addCase(loginWithToken.pending, (state, action) => {
-                state.user = action.payload.user;
+            .addCase(loginWithToken.rejected, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
             });
     },
 });

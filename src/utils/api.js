@@ -14,16 +14,13 @@ const api = axios.create({
 /**
  * console.log all requests and responses
  */
-api.interceptors.response.use(
-    (response) => {
-        if (response.data && response.data.status === 'success') {
-            const { user, ...responseDataWithUser } = response.data;
-            console.log('Response Data:', { user });
-        }
-        return response;
+api.interceptors.request.use(
+    (request) => {
+        console.log('Request Data:', request);
+        request.headers.authorization = `Bearer ${sessionStorage.getItem('token')}`;
+        return request;
     },
     function (error) {
-        error = error.response.data;
         console.log('RESPONSE ERROR', error);
         return Promise.reject(error);
     }
@@ -31,10 +28,10 @@ api.interceptors.response.use(
 
 api.interceptors.response.use(
     (response) => {
+        console.log('Response Data:', response.data);
         return response;
     },
     function (error) {
-        error = error.response.data;
         console.log('RESPONSE ERROR', error);
         return Promise.reject(error);
     }

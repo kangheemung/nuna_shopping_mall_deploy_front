@@ -5,13 +5,13 @@ import { faBars, faBox, faSearch, faShoppingBag } from '@fortawesome/free-solid-
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import userSlice from '../../features/user/userSlice';
-import { logout, loginWithToken } from '../../features/user/userSlice';
+
+import { logout } from '../../features/user/userSlice';
 
 const Navbar = ({ user }) => {
     const dispatch = useDispatch();
-    const currentUser = useSelector((state) => state.user.user);
-    const { cartItemCount } = useSelector((state) => state.cart);
+    const cartItemCount = useSelector((state) => state.cart.cartItemCount);
+
     const isMobile = window.navigator.userAgent.indexOf('Mobile') !== -1;
     const [showSearchBox, setShowSearchBox] = useState(false);
     const menuList = ['여성', 'Divided', '남성', '신생아/유아', '아동', 'H&M HOME', 'Sale', '지속가능성'];
@@ -30,18 +30,6 @@ const Navbar = ({ user }) => {
         sessionStorage.removeItem('token');
         dispatch(logout());
     };
-    const userLevel = user ? user.user.level : '';
-    useEffect(() => {
-        // Check if user is logged in using token
-        dispatch(loginWithToken())
-            .unwrap()
-            .then((userData) => {
-                console.log('User logged in with token:', userData);
-            })
-            .catch((error) => {
-                console.error('Login with token failed:', error);
-            });
-    }, []);
 
     return (
         <div>
@@ -70,7 +58,7 @@ const Navbar = ({ user }) => {
                 </div>
             </div>
 
-            {userLevel === 'admin' && (
+            {user && user.user.level === 'admin' && (
                 <Link to="/admin/product?page=1" className="link-area">
                     Admin page
                 </Link>
@@ -82,7 +70,7 @@ const Navbar = ({ user }) => {
 
                 <div>
                     <div className="display-flex">
-                        {currentUser ? (
+                        {user ? (
                             <>
                                 <div onClick={handleLogout} className="nav-icon">
                                     <FontAwesomeIcon icon={faUser} />
