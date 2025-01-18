@@ -5,25 +5,16 @@ import { initialCart } from '../cart/cartSlice';
 
 export const loginWithEmail = createAsyncThunk(
     'user/loginWithEmail',
-    async ({ email, password, navigate }, { rejectWithValue, dispatch }) => {
+    async ({ email, password, navigate }, { rejectWithValue }) => {
         try {
             const res = await api.post('/auth/login', { email, password });
             // 1.localStorage 웹사이트 꺼져도 유지 2.SessionStorage 새로고침 하면 유지 안됨
             //token_save
-            dispatch(
-                showToastMessage({
-                    message: 'Your login was successful!',
-                    status: 'success',
-                })
-            );
+
             sessionStorage.setItem('token', res.data.token);
             return res.data;
         } catch (error) {
             console.error('Login with email failed:', error);
-            dispatch(showToastMessage({ message: 'Login failed. Redirecting to login page.', status: 'error' }));
-
-            dispatch(userSlice.actions.logout());
-            navigate('/login');
             return rejectWithValue(error.error);
         }
     }
@@ -43,12 +34,7 @@ export const registerUser = createAsyncThunk(
     async ({ email, name, password, navigate }, { dispatch, rejectWithValue }) => {
         try {
             const res = await api.post('/user', { email, name, password });
-            dispatch(
-                showToastMessage({
-                    message: 'Your membership registration was successful!',
-                    status: 'success',
-                })
-            );
+
             //성공
             //1.토스트 메세지
             //2.리다이렉스 로그인 페이지
@@ -57,8 +43,7 @@ export const registerUser = createAsyncThunk(
         } catch (error) {
             //실페 메세지
             //2. 에러값 저장
-            dispatch(showToastMessage({ message: '회원가입을  실패했습니다.!', status: 'error' }));
-            return rejectWithValue(error.error);
+            return rejectWithValue(error.message);
         }
     }
 );
@@ -66,16 +51,15 @@ export const registerUser = createAsyncThunk(
 export const loginWithToken = createAsyncThunk('/user/loginWithToken', async (_, { rejectWithValue }) => {
     try {
         const res = await api.get('/user/me');
+        //console.log(res.data);
         return res.data;
     } catch (error) {
-        return rejectWithValue(error.error);
+        return rejectWithValue(error.message);
     }
 });
 //logout
 export const logout = (dispatch, navigate) => {
     sessionStorage.removeItem('token');
-    dispatch(showToastMessage({ message: 'logout_sucess!', status: 'success' }));
-    dispatch(userSlice.actions.logout());
     navigate('/login');
 };
 const userSlice = createSlice({
@@ -86,21 +70,11 @@ const userSlice = createSlice({
         loginError: null,
         registrationError: null,
         success: false,
-        email: '', // Add email field to store in Redux state
-        password: '', // Add password field to store in Redux state
     },
     reducers: {
-        setUser(state, action) {
-            state.user = action.payload; // Set the user state based on the payload
-        },
         clearErrors: (state) => {
-            state.user = {};
+            state.loginError = null;
             state.registrationError = null;
-            state.email = ''; // Reset email field to empty string
-            state.password = '';
-        },
-        logout: (state) => {
-            state.user = {};
         },
     },
     //밖에서 호출 한거여
@@ -112,10 +86,7 @@ const userSlice = createSlice({
             })
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.loading = false;
-                if (action.payload && action.payload.user) {
-                    state.user = action.payload.user;
-                    state.loginError = null;
-                }
+                state.registrationError = null;
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.registrationError = action.payload;
@@ -127,22 +98,16 @@ const userSlice = createSlice({
             .addCase(loginWithEmail.fulfilled, (state, action) => {
                 state.loading = false;
                 //로딩 스핀어 끄기
-                state.user = action.payload;
+                state.user = action.payload.user;
                 state.loginError = null;
             })
             .addCase(loginWithEmail.rejected, (state, action) => {
                 state.loading = false;
                 state.loginError = action.payload;
             })
-            .addCase(loginWithToken.pending, (state, action) => {
-                state.user = action.payload.user;
-            })
+
             .addCase(loginWithToken.fulfilled, (state, action) => {
                 state.user = action.payload.user;
-            })
-            .addCase(loginWithToken.rejected, (state, action) => {
-                state.loading = false;
-                state.user = action.payload;
             });
     },
 });
