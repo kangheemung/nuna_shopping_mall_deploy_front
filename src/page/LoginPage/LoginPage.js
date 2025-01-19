@@ -17,21 +17,9 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { loginError } = useSelector((state) => state.user);
-    useEffect(() => {
-        if (loginError) {
-            const timeout = setTimeout(() => {
-                dispatch(clearErrors());
-                navigate('/login');
-            }, 2000); // Clear error after 5 seconds (adjust as needed)
-            return () => clearTimeout(timeout);
-        }
-    }, [navigate, loginError, dispatch]);
+
     const handleLoginWithEmail = (event) => {
         event.preventDefault();
-        if (email.trim() === '' || password.trim() === '') {
-            alert('Email and password are required to log in.');
-            return;
-        }
         dispatch(loginWithEmail({ email, password }));
     };
 

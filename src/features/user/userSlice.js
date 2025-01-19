@@ -5,13 +5,13 @@ import { initialCart } from '../cart/cartSlice';
 
 export const loginWithEmail = createAsyncThunk(
     'user/loginWithEmail',
-    async ({ email, password, navigate }, { rejectWithValue }) => {
+    async ({ email, password }, { rejectWithValue }) => {
         try {
             const res = await api.post('/auth/login', { email, password });
             // 1.localStorage 웹사이트 꺼져도 유지 2.SessionStorage 새로고침 하면 유지 안됨
             //token_save
-
             sessionStorage.setItem('token', res.data.token);
+
             return res.data;
         } catch (error) {
             console.error('Login with email failed:', error);
@@ -31,14 +31,14 @@ export const loginWithGoogle = createAsyncThunk('/user/loginWithGoogle', async (
 //회원가입
 export const registerUser = createAsyncThunk(
     'user/registerUser',
-    async ({ email, name, password, navigate }, { dispatch, rejectWithValue }) => {
+    async ({ email, name, password }, { dispatch, rejectWithValue }) => {
         try {
             const res = await api.post('/user', { email, name, password });
 
             //성공
             //1.토스트 메세지
             //2.리다이렉스 로그인 페이지
-            navigate('/login');
+
             return res.data.data;
         } catch (error) {
             //실페 메세지
@@ -57,11 +57,7 @@ export const loginWithToken = createAsyncThunk('/user/loginWithToken', async (_,
         return rejectWithValue(error.message);
     }
 });
-//logout
-export const logout = (dispatch, navigate) => {
-    sessionStorage.removeItem('token');
-    navigate('/login');
-};
+
 const userSlice = createSlice({
     name: 'user',
     initialState: {
@@ -75,6 +71,10 @@ const userSlice = createSlice({
         clearErrors: (state) => {
             state.loginError = null;
             state.registrationError = null;
+        },
+        logout: (state) => {
+            // Add logic here to handle logout functionality and reset user state
+            state.user = null;
         },
     },
     //밖에서 호출 한거여
@@ -112,5 +112,5 @@ const userSlice = createSlice({
     },
 });
 
-export const { clearErrors } = userSlice.actions;
+export const { clearErrors, logout } = userSlice.actions;
 export default userSlice.reducer;

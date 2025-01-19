@@ -24,13 +24,11 @@ const Navbar = ({ user }) => {
             navigate(`?name=${event.target.value}`);
         }
     };
-    const isAdmin = user && user.level === 'admin';
-    if (isAdmin) {
-        navigate('/admin/product?page=1');
-    }
+
     const handleLogout = () => {
-        dispatch(logout());
+        dispatch(logout()); // Dispatch the logout action from userSlice
     };
+
     console.log('user:,', user);
     console.log('level:', user?.level);
     return (
