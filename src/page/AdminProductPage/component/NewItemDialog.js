@@ -19,15 +19,16 @@ const InitialFormData = {
 
 const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     const { error, success, selectedProduct } = useSelector((state) => state.product);
-    const [formData, setFormData] = useState(mode === 'new' ? { ...InitialFormData } : selectedProduct);
+    const [formData, setFormData] = useState(
+        mode === 'new' ? { ...InitialFormData } : selectedProduct
+        );
     const [stock, setStock] = useState([]);
     const dispatch = useDispatch();
-
     const [stockError, setStockError] = useState(false);
     console.log('stock', stock);
     useEffect(() => {
         if (success) setShowDialog(false);
-    }, [success, setShowDialog]);
+    }, [success]);
 
     useEffect(() => {
         if (error || !success) {
@@ -48,6 +49,8 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
     const handleClose = () => {
         //모든걸 초기화시키고;
+        setFormData({ ...InitialFormData });
+        setShowDialog(false);
         // 다이얼로그 닫아주기
     };
 
@@ -56,6 +59,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
         console.log('form data', formData);
         console.log('stock', stock);
         //재고를 입력했는지 확인, 아니면 에러
+        //[['s','3']['m','4']];=>{s:3,m:4}
         if (stock.length === 0) return setStockError(true);
         // 재고를 배열에서 객체로 바꿔주기
         const totalStock = stock.reduce((total, item) => {
@@ -65,7 +69,12 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
         // [['M',2]] 에서 {M:2}로
         if (mode === 'new') {
             //새 상품 만들기
-            dispatch(createProduct({ ...formData, stock: totalStock }));
+            dispatch(
+                createProduct({
+                    ...formData,
+                    stock: totalStock,
+                })
+            );
         } else {
             // 상품 수정하기
         }
@@ -105,7 +114,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
     const onHandleCategory = (event) => {
         //카테고리가 이미 추가 있으면 제거
-
+        console.log('formdata,formData)');
         if (formData.category.includes(event.target.value)) {
             const newCategory = formData.category.filter((item) => item !== event.target.value);
             setFormData({

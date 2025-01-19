@@ -55,21 +55,34 @@ const productSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(createProduct.pending, (state, action) => {
-            state.loading = true;
-        });
-        builder.addCase(createProduct.fulfilled, (state, action) => {
-            state.loading = false;
-            state.error = '';
-            state.success = true;
-            //상품생성 성공 했다? 다이얼로그를 닫고 ,
-            //실패? 실패 매세지를 다이어 로그에 보여주고,
-        });
-        builder.addCase(createProduct.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.payload;
-            state.success = false;
-        });
+        builder
+            .addCase(createProduct.pending, (state, action) => {
+                state.loading = true;
+            })
+            .addCase(createProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = '';
+                state.success = true;
+                //상품생성 성공 했다? 다이얼로그를 닫고 ,
+                //실패? 실패 매세지를 다이어 로그에 보여주고,
+            })
+            .addCase(createProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+                state.success = false;
+            })
+            .addCase(getProductList.pending, (state, action) => {
+                state.loading = true;
+            })
+            .addCase(getProductList.fulfilled, (state, action) => {
+                state.loading = false;
+                state.ProductList = action.payload.data;
+                state.error = '';
+            })
+            .addCase(getProductList.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
     },
 });
 
