@@ -18,6 +18,7 @@ class CloudinaryUploadWidget extends Component {
                     console.log('Done! Here is the image info: ', result.info);
                     document.getElementById('uploadedimage').setAttribute('src', result.info.secure_url);
                     this.props.uploadImage(result.info.secure_url);
+                    //백엔드로 이미지 주소로 이동 
                 }
             } //https://cloudinary.com/documentation/react_image_and_video_upload
         );

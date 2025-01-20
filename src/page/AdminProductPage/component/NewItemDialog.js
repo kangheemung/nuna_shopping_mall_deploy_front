@@ -19,9 +19,7 @@ const InitialFormData = {
 
 const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     const { error, success, selectedProduct } = useSelector((state) => state.product);
-    const [formData, setFormData] = useState(
-        mode === 'new' ? { ...InitialFormData } : selectedProduct
-        );
+    const [formData, setFormData] = useState(mode === 'new' ? { ...InitialFormData } : selectedProduct);
     const [stock, setStock] = useState([]);
     const dispatch = useDispatch();
     const [stockError, setStockError] = useState(false);
@@ -56,16 +54,18 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log('form data', formData);
+        console.log('formdata', formData);
+
         console.log('stock', stock);
-        //재고를 입력했는지 확인, 아니면 에러
+        //어레이 타입을 => 객체로 바꿔서 넣어주는 코드
         //[['s','3']['m','4']];=>{s:3,m:4}
+        //재고를 입력했는지 확인, 아니면 에러
         if (stock.length === 0) return setStockError(true);
         // 재고를 배열에서 객체로 바꿔주기
         const totalStock = stock.reduce((total, item) => {
             return { ...total, [item[0]]: parseInt(item[1]) };
         }, {});
-        console.log('formdata', totalStock);
+        console.log('formdatatotalStock', totalStock);
         // [['M',2]] 에서 {M:2}로
         if (mode === 'new') {
             //새 상품 만들기
@@ -88,7 +88,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
     const addStock = () => {
         //재고타입 추가시 배열에 새 배열 추가
-        setStock([...stock, []]);
+        setStock([...stock, ['', 0]]);
     };
 
     const deleteStock = (idx) => {
@@ -103,13 +103,17 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
         const newStock = [...stock];
         newStock[index][0] = value;
         setStock(newStock);
+        console.log('new:', newStock);
     };
 
     const handleStockChange = (value, index) => {
         //재고 수량 변환하기
         const newStock = [...stock];
-        newStock[index][1] = value;
-        setStock(newStock);
+        // 0 미만 값은 보이지 않게 한다.
+        if (value > 0) {
+            newStock[index][1] = value;
+            setStock(newStock);
+        }
     };
 
     const onHandleCategory = (event) => {
@@ -131,7 +135,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     };
 
     const uploadImage = (url) => {
-        //이미지 업로드
+        //이미지 업로드 스트링 타입
         setFormData({ ...formData, image: url });
     };
 
