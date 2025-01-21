@@ -3,7 +3,15 @@ import api from '../../utils/api';
 import { showToastMessage } from '../common/uiSlice';
 
 // 비동기 액션 생성
-export const getProductList = createAsyncThunk('products/getProductList', async (query, { rejectWithValue }) => {});
+export const getProductList = createAsyncThunk('products/getProductList', async (query, { rejectWithValue }) => {
+    try {
+        const res = await api.get('/product');
+        if (res.status !== 200) throw new Error(res.error);
+        return res.data.data;
+    } catch (error) {
+        return rejectWithValue(error.error);
+    }
+});
 
 export const getProductDetail = createAsyncThunk('products/getProductDetail', async (id, { rejectWithValue }) => {});
 
@@ -13,7 +21,7 @@ export const createProduct = createAsyncThunk(
         try {
             const response = await api.post('/product', formData);
             if (response.status !== 200) throw new Error(response.error);
-            dispatch(showToastMessage({ message: '상품 생성 완료 ', status: 'success' }));
+            dispatch(showToastMessage({ message: 'Product creation complete', status: 'success' }));
             return response.data.data;
         } catch (error) {
             return rejectWithValue(error.error);
@@ -76,12 +84,13 @@ const productSlice = createSlice({
             })
             .addCase(getProductList.fulfilled, (state, action) => {
                 state.loading = false;
-                state.ProductList = action.payload.data;
+                state.ProductList = action.payload;
                 state.error = '';
             })
             .addCase(getProductList.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                state.success = false;
             });
     },
 });

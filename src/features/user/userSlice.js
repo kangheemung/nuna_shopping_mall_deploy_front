@@ -11,7 +11,7 @@ export const loginWithEmail = createAsyncThunk(
             // 1.localStorage 웹사이트 꺼져도 유지 2.SessionStorage 새로고침 하면 유지 안됨
             //token_save
             sessionStorage.setItem('token', res.data.token);
-
+            dispatch(showToastMessage({ message: 'login success!', status: 'success' }));
             return res.data;
         } catch (error) {
             console.error('Login with email failed:', error);
@@ -38,8 +38,12 @@ export const registerUser = createAsyncThunk(
             //성공
             //1.토스트 메세지
             //2.리다이렉스 로그인 페이지
-
-            return res.data.data;
+            if (res.data && res.data.data) {
+                dispatch(showToastMessage({ message: 'register success!', status: 'success' }));
+                return res.data.data;
+            } else {
+                throw new Error('Invalid response format');
+            }
         } catch (error) {
             //실페 메세지
             //2. 에러값 저장
