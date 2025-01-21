@@ -7,6 +7,7 @@ export const getProductList = createAsyncThunk('products/getProductList', async 
     try {
         const res = await api.get('/product');
         if (res.status !== 200) throw new Error(res.error);
+        console.log('productslice_data', res);
         return res.data.data;
     } catch (error) {
         return rejectWithValue(error.error);
@@ -84,7 +85,7 @@ const productSlice = createSlice({
             })
             .addCase(getProductList.fulfilled, (state, action) => {
                 state.loading = false;
-                state.ProductList = action.payload;
+                state.productList = action.payload;
                 state.error = '';
             })
             .addCase(getProductList.rejected, (state, action) => {

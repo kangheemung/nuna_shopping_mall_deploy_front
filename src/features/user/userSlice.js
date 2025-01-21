@@ -10,9 +10,12 @@ export const loginWithEmail = createAsyncThunk(
             const res = await api.post('/auth/login', { email, password });
             // 1.localStorage 웹사이트 꺼져도 유지 2.SessionStorage 새로고침 하면 유지 안됨
             //token_save
-            sessionStorage.setItem('token', res.data.token);
-            dispatch(showToastMessage({ message: 'login success!', status: 'success' }));
-            return res.data;
+            if (res.data && res.data.token) {
+                sessionStorage.setItem('token', res.data.token);
+                return res.data;
+            } else {
+                throw new Error('Invalid response format');
+            }
         } catch (error) {
             console.error('Login with email failed:', error);
             return rejectWithValue(error.error);
