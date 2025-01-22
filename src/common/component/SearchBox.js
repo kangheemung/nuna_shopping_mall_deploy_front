@@ -9,6 +9,7 @@ const SearchBox = ({ searchQuery, setSearchQuery, placeholder, field }) => {
 
   const onCheckEnter = (event) => {
     if (event.key === "Enter") {
+      //search Queryがアップデートになる
       setSearchQuery({ ...searchQuery, page: 1, [field]: event.target.value });
     }
   };

@@ -29,8 +29,8 @@ const Navbar = ({ user }) => {
         dispatch(logout()); // Dispatch the logout action from userSlice
     };
 
-    console.log('user:,', user);
-    console.log('level:', user?.level);
+    //console.log('user:,', user);
+    //console.log('level:', user?.level);
     return (
         <div>
             {showSearchBox && (
