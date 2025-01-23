@@ -26,8 +26,8 @@ const AdminProductPage = () => {
     //상품리스트 가져오기 (url쿼리 맞춰서)
 
     useEffect(() => {
-        //상품리스트 가져오기//검색조건들 같이 
-        dispatch(getProductList(...searchQuery));
+        //상품리스트 가져오기//검색조건들 같이
+        dispatch(getProductList(searchQuery));
     }, [query]);
     useEffect(() => {
         if (searchQuery.name === '') {
