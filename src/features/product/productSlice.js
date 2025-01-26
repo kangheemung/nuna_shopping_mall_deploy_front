@@ -3,16 +3,21 @@ import api from '../../utils/api';
 import { showToastMessage } from '../common/uiSlice';
 
 // 비동기 액션 생성
-export const getProductList = createAsyncThunk('products/getProductList', async (query, { rejectWithValue }) => {
+export const getProductList = createAsyncThunk('products/getProductList', 
+async (query, { rejectWithValue }) => {
     try {
+        // Check and ensure non-empty 'name' parameter before constructing the API request
         const res = await api.get('/product', { params: { ...query } });
-        console.log('rrr', res);
-        
+        console.log('Response Data rrr:', res);
         if (res.status !== 200) throw new Error(res.error);
-        //console.log('productslice_data', res);
-        return res.data.data;
+
+        // if (res && res.status && res.status >= 400) {
+        //     throw new Error(`Request failed with status ${res.status}`);
+        // }
+
+        return res.data.data; // Assuming the total page count is available in res.totalPages
     } catch (error) {
-        return rejectWithValue(error.error);
+        return rejectWithValue(error.message);
     }
 });
 
@@ -27,7 +32,7 @@ export const createProduct = createAsyncThunk(
             dispatch(showToastMessage({ message: 'Product creation complete', status: 'success' }));
             return response.data.data;
         } catch (error) {
-            return rejectWithValue(error.error);
+            return rejectWithValue(error.message);
         }
     }
 );
@@ -88,6 +93,7 @@ const productSlice = createSlice({
             .addCase(getProductList.fulfilled, (state, action) => {
                 state.loading = false;
                 state.productList = action.payload;
+                state.totalPageNum = action.payload.totalPageNum;
                 state.error = '';
             })
             .addCase(getProductList.rejected, (state, action) => {
