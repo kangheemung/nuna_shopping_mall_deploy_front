@@ -11,6 +11,8 @@ import { getProductList, deleteProduct, setSelectedProduct } from '../../feature
 const AdminProductPage = () => {
     const navigate = useNavigate();
     const productList = useSelector((state) => state.product.productList);
+    const totalPageNum = useSelector((state) => state.product.totalPageNum);
+
     const [query, setQuery] = useSearchParams();
     const dispatch = useDispatch();
     const [showDialog, setShowDialog] = useState(false);
@@ -20,7 +22,7 @@ const AdminProductPage = () => {
     }); //검색 조건들을 저장하는 객체
 
     const [mode, setMode] = useState('new');
-    const totalPageNum = useSelector((state) => state.product.totalPageNum);
+
     const tableHeader = ['#', 'Sku', 'Name', 'Price', 'Stock', 'Image', 'Status', ''];
 
     //상품리스트 가져오기 (url쿼리 맞춰서)
@@ -34,15 +36,16 @@ const AdminProductPage = () => {
         //상품리스트 가져오기//검색조건들 같이
         dispatch(getProductList({ ...searchQuery }));
     }, [query]);
+
     useEffect(() => {
         if (searchQuery.name === '') {
             delete searchQuery.name;
         }
         console.log('qqq', searchQuery);
         const params = new URLSearchParams(searchQuery);
-        const query = params.toString();
+        const queryString = params.toString();
         console.log('qqqquery', query);
-        navigate('?' + query);
+        navigate('?' + queryString);
         //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
     }, [searchQuery]);
     const deleteItem = (id) => {
@@ -63,13 +66,13 @@ const AdminProductPage = () => {
 
     const handlePageClick = ({ selected }) => {
         //  쿼리에 페이지값 바꿔주기
-        //     console.log('selected', selected);
-        //  return page: selected + 1 ;
+        console.log('selected', selected);
+        setSearchQuery({ ...setSearchQuery, page: selected + 1 });
     };
     //searchboxから検索語を読んでくる。=> エンターをしたら => search Queryがアップデートになる。{name:ストレートパンツ}
     //search Query객체 안에 아이템 기준으로 url을 새로 생성해서 호출 $name = 스트레이트+팬츠
     ///url쿼리 읽어 오기 =>URL쿼리기준으로BE에 검색 조건과 함께 호출한다.
-
+    console.log('Total Page Number:', totalPageNum);
     return (
         <div className="locate-center">
             <Container>
