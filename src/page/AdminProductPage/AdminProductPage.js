@@ -11,7 +11,6 @@ import { getProductList, deleteProduct, setSelectedProduct } from '../../feature
 const AdminProductPage = () => {
     const navigate = useNavigate();
     const productList = useSelector((state) => state.product.productList);
-
     const [query, setQuery] = useSearchParams();
     const dispatch = useDispatch();
     const [showDialog, setShowDialog] = useState(false);

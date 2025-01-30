@@ -54,7 +54,7 @@ const productSlice = createSlice({
         selectedProduct: null,
         loading: false,
         error: '',
-        totalPageNum: 1,
+        totalPageNum: 5,
         success: false,
     },
     reducers: {

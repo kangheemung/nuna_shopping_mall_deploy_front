@@ -3,32 +3,57 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 import { faBars, faBox, faSearch, faShoppingBag } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../features/user/userSlice';
-
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { getProductList, deleteProduct, setSelectedProduct } from '../../features/product/productSlice';
 const Navbar = ({ user }) => {
     const dispatch = useDispatch();
+    const [query, setQuery] = useSearchParams();
     const { cartItemCount } = useSelector((state) => state.cart);
+
     const isMobile = window.navigator.userAgent.indexOf('Mobile') !== -1;
     const [showSearchBox, setShowSearchBox] = useState(false);
     const menuList = ['여성', 'Divided', '남성', '신생아/유아', '아동', 'H&M HOME', 'Sale', '지속가능성'];
-
+    const [searchQuery, setSearchQuery] = useState({
+        page: query.get('page') || 1,
+        name: query.get('name') || '',
+    });
     let [width, setWidth] = useState(0);
     let navigate = useNavigate();
+    const updateSearchQuery = (newSearchQuery) => {
+        setQuery({ ...newSearchQuery });
+    };
+
     const onCheckEnter = (event) => {
         if (event.key === 'Enter') {
-            if (event.target.value === '') {
-                return navigate('/');
-            }
-            navigate(`?name=${event.target.value}`);
+            const searchTerm = event.target.value.trim();
+            setSearchQuery({ ...searchQuery, name: searchTerm });
+            updateSearchQuery(searchQuery);
         }
     };
 
     const handleLogout = () => {
         dispatch(logout()); // Dispatch the logout action from userSlice
     };
+    const handlePageClick = ({ selected }) => {
+        setSearchQuery({ ...searchQuery, page: selected + 1 });
+    };
+    useEffect(() => {
+        dispatch(getProductList({ ...searchQuery }));
+    }, [query]);
 
+    useEffect(() => {
+        if (searchQuery.name === '') {
+            delete searchQuery.name;
+        }
+        console.log('qqq', searchQuery);
+        const params = new URLSearchParams(searchQuery);
+        const query = params.toString();
+        console.log('qqqquery', query);
+        navigate('?' + query);
+        //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
+    }, [searchQuery]);
     //console.log('user:,', user);
     //console.log('level:', user?.level);
     return (

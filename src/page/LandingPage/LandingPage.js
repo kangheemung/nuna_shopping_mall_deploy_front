@@ -15,21 +15,8 @@ const LandingPage = () => {
     });
     const productList = useSelector((state) => state.product.productList);
     const totalPageNum = useSelector((state) => state.product.totalPageNum);
-    const name = query.get('name');
     useEffect(() => {
-        //상품리스트 가져오기//검색조건들 같이
         dispatch(getProductList({ ...searchQuery }));
-    }, [query]);
-    useEffect(() => {
-        if (searchQuery.name === '') {
-            delete searchQuery.name;
-        }
-        console.log('qqq', searchQuery);
-        const params = new URLSearchParams(searchQuery);
-        const query = params.toString();
-        console.log('qqqquery', query);
-        navigate('?' + query);
-        //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
     }, [searchQuery]);
     const handlePageClick = ({ selected }) => {
         //  쿼리에 페이지값 바꿔주기
@@ -47,7 +34,11 @@ const LandingPage = () => {
                     ))
                 ) : (
                     <div className="text-align-center empty-bag">
-                        {name === '' ? <h2>등록된 상품이 없습니다!</h2> : <h2>{name}과 일치한 상품이 없습니다!`</h2>}
+                        {searchQuery.name === '' ? (
+                            <h2>등록된 상품이 없습니다!</h2>
+                        ) : (
+                            <h2>{searchQuery.name}과 일치한 상품이 없습니다!`</h2>
+                        )}
                     </div>
                 )}
             </Row>
