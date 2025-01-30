@@ -64,6 +64,19 @@ export const loginWithToken = createAsyncThunk('/user/loginWithToken', async (_,
         return rejectWithValue(error.message);
     }
 });
+export const getUserData = createAsyncThunk('products/getUserData', async (_, { rejectWithValue }) => {
+    try {
+        const response = await api.get('/user/me');
+
+        if (response.status !== 200) {
+            throw new Error(response.error);
+        }
+
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.message);
+    }
+});
 
 const userSlice = createSlice({
     name: 'user',
@@ -84,6 +97,7 @@ const userSlice = createSlice({
             state.user = null;
         },
     },
+
     //밖에서 호출 한거여
     extraReducers: (builder) => {
         //logingspaner
