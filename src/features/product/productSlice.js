@@ -8,12 +8,12 @@ export const getProductList = createAsyncThunk('products/getProductList', async 
         // Check and ensure non-empty 'name' parameter before constructing the API request
         const response = await api.get('/product', { params: { ...query } });
         console.log('Query object:', query);
-        console.log('Response Data rrr여기를 보아라', response);
+        console.log('Response Data rrr여기를 보아라', response.data);
         if (response.status !== 200) {
             throw new Error(response.error); // 例: response.data.message は実際のエラーメッセージに置き換える
         }
 
-        return response.data.data; // Assuming the total page count is available in res.totalPages
+        return response.data; // Assuming the total page count is available in res.totalPages
     } catch (error) {
         return rejectWithValue(error.error);
     }
@@ -29,7 +29,7 @@ export const createProduct = createAsyncThunk(
             if (response.status !== 200) throw new Error(response.error);
             dispatch(showToastMessage({ message: 'Product creation complete', status: 'success' }));
             console.log('PRoductrrrr', response);
-            return response.data.data;
+            return response.data;
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -91,7 +91,7 @@ const productSlice = createSlice({
             })
             .addCase(getProductList.fulfilled, (state, action) => {
                 state.loading = false;
-                state.productList = action.payload; // Make sure the payload contains the array of products
+                state.productList = action.payload.data; // Make sure the payload contains the array of products
                 state.error = '';
                 state.totalPageNum = action.payload.totalPageNum;
                 //state.totalPageNum = action.payload.totalPageNum || 1;
