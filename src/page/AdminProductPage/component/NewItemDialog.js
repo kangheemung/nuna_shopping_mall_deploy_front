@@ -78,7 +78,15 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
             );
         } else {
             // 상품 수정하기
+            dispatch(
+                editProduct({
+                    ...formData,
+                    stock: totalStock,
+                    id: selectedProduct.id,
+                })
+            );
         }
+        setShowDialog(false);
     };
 
     const handleChange = (event) => {

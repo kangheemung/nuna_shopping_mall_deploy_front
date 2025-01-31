@@ -43,7 +43,15 @@ export const deleteProduct = createAsyncThunk(
 
 export const editProduct = createAsyncThunk(
     'products/editProduct',
-    async ({ id, ...formData }, { dispatch, rejectWithValue }) => {}
+    async ({ id, ...formData }, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await api.put(`/product/${id}`, formData);
+            if (response.status !== 200) throw new Error(response.error);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.error);
+        }
+    }
 );
 
 // 슬라이스 생성
@@ -58,6 +66,7 @@ const productSlice = createSlice({
         success: false,
     },
     reducers: {
+        //saveしたデータ情報＝＞NewItemDialog確認
         setSelectedProduct: (state, action) => {
             state.selectedProduct = action.payload;
         },
@@ -97,6 +106,19 @@ const productSlice = createSlice({
                 //state.totalPageNum = action.payload.totalPageNum || 1;
             })
             .addCase(getProductList.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+                state.success = false;
+            })
+            .addCase(editProduct.pending, (state, action) => {
+                state.loading = true;
+            })
+            .addCase(editProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = '';
+                state.success = true;
+            })
+            .addCase(editProduct.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
                 state.success = false;
