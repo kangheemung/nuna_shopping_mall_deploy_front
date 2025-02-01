@@ -18,8 +18,7 @@ const InitialFormData = {
 };
 
 const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
-    const selectedProduct = useSelector((state) => state.product.selectedProduct);
-    const { error, success } = useSelector((state) => state.product);
+    const { error, success, selectedProduct } = useSelector((state) => state.product);
     const [formData, setFormData] = useState(mode === 'new' ? { ...InitialFormData } : selectedProduct);
     const [stock, setStock] = useState([]);
     const dispatch = useDispatch();
@@ -56,12 +55,12 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log('formdata', formData);
-
         console.log('stock', stock);
         //어레이 타입을 => 객체로 바꿔서 넣어주는 코드
         //[['s','3']['m','4']];=>{s:3,m:4}
         //재고를 입력했는지 확인, 아니면 에러
         if (stock.length === 0) return setStockError(true);
+        setStockError(false);
         // 재고를 배열에서 객체로 바꿔주기
         const totalStock = stock.reduce((total, item) => {
             return { ...total, [item[0]]: parseInt(item[1]) };
@@ -82,7 +81,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
                 editProduct({
                     ...formData,
                     stock: totalStock,
-                    id: selectedProduct.id,
+                    id: selectedProduct._id,
                 })
             );
         }
@@ -119,7 +118,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
         //재고 수량 변환하기
         const newStock = [...stock];
         // 0 미만 값은 보이지 않게 한다.
-        if (value > 0) {
+        if (value >= 0) {
             newStock[index][1] = value;
             setStock(newStock);
         }

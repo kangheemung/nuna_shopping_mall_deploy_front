@@ -5,6 +5,9 @@ import { showToastMessage } from '../common/uiSlice';
 // 비동기 액션 생성
 export const getProductList = createAsyncThunk('products/getProductList', async (query, { rejectWithValue }) => {
     try {
+        if (!query || Object.keys(query).length === 0) {
+            throw new Error('Query parameters are undefined or empty');
+        }
         // Check and ensure non-empty 'name' parameter before constructing the API request
         const response = await api.get('/product', { params: { ...query } });
         console.log('Query object:', query);
@@ -45,9 +48,15 @@ export const editProduct = createAsyncThunk(
     'products/editProduct',
     async ({ id, ...formData }, { dispatch, rejectWithValue }) => {
         try {
+            if (!id) {
+                throw new Error('Product ID is undefined');
+            }
+
             const response = await api.put(`/product/${id}`, formData);
+            console.log('Edited Data:', response.data);
             if (response.status !== 200) throw new Error(response.error);
-            return response.data;
+            console.log('編集データ', response.data);
+            return response.data.data;
         } catch (error) {
             return rejectWithValue(error.error);
         }
@@ -59,7 +68,7 @@ const productSlice = createSlice({
     name: 'products',
     initialState: {
         productList: [],
-        selectedProduct: null,
+        selectedProduct: null, //選択したデータ
         loading: false,
         error: '',
         totalPageNum: 5,
