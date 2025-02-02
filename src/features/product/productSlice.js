@@ -23,7 +23,15 @@ export const getProductList = createAsyncThunk('products/getProductList', async 
     }
 });
 
-export const getProductDetail = createAsyncThunk('products/getProductDetail', async (id, { rejectWithValue }) => {});
+export const getProductDetail = createAsyncThunk('products/getProductDetail', async (id, { rejectWithValue }) => {
+    try {
+        const res = await api.get(`/product/${id}`);
+        if (res.status !== 200) throw new Error(res.error);
+        return res.data.data;
+    } catch (error) {
+        return rejectWithValue(error.message);
+    }
+});
 
 export const createProduct = createAsyncThunk(
     'products/createProduct',
@@ -48,7 +56,7 @@ export const createProduct = createAsyncThunk(
 export const deleteProduct = createAsyncThunk('products/deleteProduct', async (id, { dispatch, rejectWithValue }) => {
     try {
         const response = await api.delete(`/product/${id}`);
-        dispatch(getProductList({ isDeleted: false}));
+        dispatch(getProductList({ isDeleted: false }));
         return response.data.data;
     } catch (error) {
         return rejectWithValue(error.error);
@@ -139,6 +147,21 @@ const productSlice = createSlice({
                 state.success = true;
             })
             .addCase(editProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+                state.success = false;
+            })
+
+            .addCase(getProductDetail.pending, (state, action) => {
+                state.loading = true;
+            })
+            .addCase(getProductDetail.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = '';
+                state.selectedProduct = action.payload; // Assuming that the action.payload directly contains the selected product data
+                state.success = true;
+            })
+            .addCase(getProductDetail.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
                 state.success = false;

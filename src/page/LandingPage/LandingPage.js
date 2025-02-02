@@ -7,6 +7,7 @@ import { getProductList } from '../../features/product/productSlice';
 import ReactPaginate from 'react-paginate';
 const LandingPage = () => {
     const [query, setQuery] = useSearchParams();
+    const [showDialog, setShowDialog] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState({
