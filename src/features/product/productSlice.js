@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../utils/api';
 import { showToastMessage } from '../common/uiSlice';
+import { getProductList as getProductListAction } from './productSlice';
 
 // 비동기 액션 생성
 export const getProductList = createAsyncThunk('products/getProductList', async (query, { rejectWithValue }) => {
@@ -32,17 +33,27 @@ export const createProduct = createAsyncThunk(
             if (response.status !== 200) throw new Error(response.error);
             dispatch(showToastMessage({ message: 'Product creation complete', status: 'success' }));
             console.log('PRoductrrrr', response);
+            dispatch(getProductList({ page: 1 }));
             return response.data;
         } catch (error) {
             return rejectWithValue(error.message);
         }
     }
 );
+// 상품을 삭제하는 로직을 스스로 만들어보자
 
-export const deleteProduct = createAsyncThunk(
-    'products/deleteProduct',
-    async (id, { dispatch, rejectWithValue }) => {}
-);
+// 상품 삭제 버튼을 누른다
+// 삭제하려는 상품의 id값과 함께 백엔드 url이 호출된다
+
+export const deleteProduct = createAsyncThunk('products/deleteProduct', async (id, { dispatch, rejectWithValue }) => {
+    try {
+        const response = await api.delete(`/product/${id}`);
+        dispatch(getProductList({ isDeleted: false}));
+        return response.data.data;
+    } catch (error) {
+        return rejectWithValue(error.error);
+    }
+});
 
 export const editProduct = createAsyncThunk(
     'products/editProduct',
@@ -51,11 +62,11 @@ export const editProduct = createAsyncThunk(
             if (!id) {
                 throw new Error('Product ID is undefined');
             }
-
             const response = await api.put(`/product/${id}`, formData);
             console.log('Edited Data:', response.data);
             if (response.status !== 200) throw new Error(response.error);
             console.log('編集データ', response.data);
+            dispatch(getProductList({ page: 1 }));
             return response.data.data;
         } catch (error) {
             return rejectWithValue(error.error);
@@ -128,6 +139,21 @@ const productSlice = createSlice({
                 state.success = true;
             })
             .addCase(editProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+                state.success = false;
+            })
+            // 백엔드는 해당 상품의 isDeleted의 값을 바꾼다.
+            // 상품을 보여줄때 isDeleted가 false인것만 보여주게 필터링한느 작업을 추가한다.
+            .addCase(deleteProduct.pending, (state, action) => {
+                state.loading = true;
+            })
+            .addCase(deleteProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = '';
+                state.success = true;
+            })
+            .addCase(deleteProduct.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
                 state.success = false;
