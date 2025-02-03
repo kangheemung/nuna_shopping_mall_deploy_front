@@ -23,7 +23,8 @@ export const getProductList = createAsyncThunk('products/getProductList', async 
     }
 });
 
-export const getProductDetail = createAsyncThunk('products/getProductDetail', async (id, { rejectWithValue }) => {
+export const getProductDetail = createAsyncThunk('products/getProductDetail',
+async (id, { rejectWithValue }) => {
     try {
         const res = await api.get(`/product/${id}`);
         if (res.status !== 200) throw new Error(res.error);
@@ -57,7 +58,8 @@ export const deleteProduct = createAsyncThunk('products/deleteProduct', async (i
     try {
         const response = await api.delete(`/product/${id}`);
         dispatch(getProductList({ isDeleted: false }));
-        return response.data.data;
+        dispatch(showToastMessage('Product deleted successfully.'));
+        dispatch(getProductList({ page: 1 }));
     } catch (error) {
         return rejectWithValue(error.error);
     }
