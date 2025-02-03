@@ -11,25 +11,38 @@ import { addToCart } from '../../features/cart/cartSlice';
 const ProductDetail = () => {
     const dispatch = useDispatch();
     const { selectedProduct, error, loading } = useSelector((state) => state.product);
-
     const [size, setSize] = useState('');
     const { id } = useParams();
     const [sizeError, setSizeError] = useState(false);
-    const user = useSelector((state) => state.user.user);
+    const { user } = useSelector((state) => state.user);
     const navigate = useNavigate();
 
     const addItemToCart = () => {
         //사이즈를 아직 선택안했다면 에러
+        if (size === '') {
+            setSizeError(true);
+            return;
+        }
         // 아직 로그인을 안한유저라면 로그인페이지로
+        if (!user) {
+            navigate('/login');
+        }
         // 카트에 아이템 추가하기
+        dispatch(addToCart(id, size));
     };
     const selectSize = (value) => {
-        // 사이즈 추가하기
+        console.log('사이즈 추가하기', value);
+        // 사이즈선택  추가하기
+        //만약 선택됐다면 메세지 안나오게
+        if (sizeError) setSizeError(false);
+        setSize(value);
+        //추가하기addItemToCart
+        dispatch(addToCart({ id, size }));
     };
 
     useEffect(() => {
         dispatch(getProductDetail(id));
-    }, [id]);
+    }, [id, dispatch]);
 
     if (loading || !selectedProduct)
         return (
@@ -59,13 +72,13 @@ const ProductDetail = () => {
                         title={size}
                         align="start"
                         onSelect={(value) => selectSize(value)}>
-                        {/* <Dropdown.Toggle
+                        <Dropdown.Toggle
                             className="size-drop-down"
                             variant={sizeError ? 'outline-danger' : 'outline-dark'}
                             id="dropdown-basic"
                             align="start">
                             {size === '' ? '사이즈 선택' : size.toUpperCase()}
-                        </Dropdown.Toggle> */}
+                        </Dropdown.Toggle>
 
                         <Dropdown.Menu className="size-drop-down">
                             {Object.keys(selectedProduct.stock).length > 0 &&
@@ -82,7 +95,7 @@ const ProductDetail = () => {
                                 )}
                         </Dropdown.Menu>
                     </Dropdown>
-                    {/* <div className="warning-message">{sizeError && '사이즈를 선택해주세요.'}</div> */}
+                    <div className="warning-message">{sizeError && '사이즈를 선택해주세요.'}</div>
                     <Button variant="dark" className="add-button" onClick={addItemToCart}>
                         추가
                     </Button>

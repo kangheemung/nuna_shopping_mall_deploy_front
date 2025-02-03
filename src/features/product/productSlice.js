@@ -6,9 +6,6 @@ import { getProductList as getProductListAction } from './productSlice';
 // 비동기 액션 생성
 export const getProductList = createAsyncThunk('products/getProductList', async (query, { rejectWithValue }) => {
     try {
-        if (!query || Object.keys(query).length === 0) {
-            throw new Error('Query parameters are undefined or empty');
-        }
         // Check and ensure non-empty 'name' parameter before constructing the API request
         const response = await api.get('/product', { params: { ...query } });
         console.log('Query object:', query);
@@ -23,8 +20,7 @@ export const getProductList = createAsyncThunk('products/getProductList', async 
     }
 });
 
-export const getProductDetail = createAsyncThunk('products/getProductDetail',
-async (id, { rejectWithValue }) => {
+export const getProductDetail = createAsyncThunk('products/getProductDetail', async (id, { rejectWithValue }) => {
     try {
         const res = await api.get(`/product/${id}`);
         if (res.status !== 200) throw new Error(res.error);
