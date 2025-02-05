@@ -16,7 +16,12 @@ export const addToCart = createAsyncThunk('cart/addToCart', async ({ id, size },
     try {
         const res = await api.post('/cart', { productId: id, size, qty: 1 });
         if (res.status !== 200) throw new Error(res.error);
-        dispatch(showToastMessage({ message: 'add_to_cart_success', status: 'success' }));
+        dispatch(
+            showToastMessage({
+                message: 'add_to_cart_success',
+                status: 'success',
+            })
+        );
         return res.data; //todo!
     } catch (e) {
         dispatch(showToastMessage({ message: 'Add_failed.', status: 'error' }));
@@ -49,6 +54,7 @@ const cartSlice = createSlice({
             .addCase(addToCart.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = '';
+                state.cartItemCount = action.payload;
                 //Todostate.cartList = payload.cartList;
             })
             .addCase(addToCart.rejected, (state, action) => {
