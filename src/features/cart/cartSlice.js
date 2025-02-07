@@ -12,22 +12,29 @@ const initialState = {
 };
 
 // Async thunk actions
-export const addToCart = createAsyncThunk('cart/addToCart', async ({ id, size }, { rejectWithValue, dispatch }) => {
-    try {
-        const res = await api.post('/cart', { productId: id, size, qty: 1 });
-        if (res.status !== 200) throw new Error(res.error);
-        dispatch(
-            showToastMessage({
-                message: 'add_to_cart_success',
-                status: 'success',
-            })
-        );
-        return res.data; //todo!
-    } catch (e) {
-        dispatch(showToastMessage({ message: 'Add_failed.', status: 'error' }));
-        return rejectWithValue(e.error);
+export const addToCart = createAsyncThunk(
+    'cart/addToCart',
+    async ({ id, size, qty }, { rejectWithValue, dispatch }) => {
+        try {
+            if (!id || !size || !qty) {
+                throw new Error('ProductId, Size, and Quantity are required');
+            }
+            const res = await api.post('/cart', { productId: id, size, qty: 1 });
+            if (res.status !== 200) throw new Error(res.error);
+            dispatch(
+                showToastMessage({
+                    message: 'add_to_cart_success',
+                    status: 'success',
+                })
+            );
+            console.log('カーとデータを見ましょう', res.data);
+            return res.data; //todo!
+        } catch (e) {
+            dispatch(showToastMessage({ message: '追加不可', status: 'error' }));
+            return rejectWithValue(e.message);
+        }
     }
-});
+);
 
 export const getCartList = createAsyncThunk('cart/getCartList', async (_, { rejectWithValue, dispatch }) => {});
 
