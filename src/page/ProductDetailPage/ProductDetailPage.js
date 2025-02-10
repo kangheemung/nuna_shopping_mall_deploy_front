@@ -26,26 +26,19 @@ const ProductDetail = () => {
         // 아직 로그인을 안한유저라면 로그인페이지로
         if (!user) {
             navigate('/login');
-            return;
         }
         // 카트에 아이템 추가하기
         dispatch(addToCart({ id, size }));
     };
     const selectSize = (value) => {
-        console.log('사이즈 추가하기', value);
-        // 사이즈선택  추가하기
-        //만약 선택됐다면 메세지 안나오게
         if (sizeError) setSizeError(false);
         setSize(value);
-        //추가하기addItemToCart
-        dispatch(addToCart({ id, size }));
     };
-
     useEffect(() => {
         dispatch(getProductDetail(id));
     }, [id, dispatch]);
 
-    if (loading || !selectedProduct)
+    if (loading || !selectedProduct) {
         return (
             <ColorRing
                 visible={true}
@@ -57,6 +50,7 @@ const ProductDetail = () => {
                 colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
             />
         );
+    }
     return (
         <Container className="product-detail-card">
             <Row>
