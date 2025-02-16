@@ -28,6 +28,7 @@ const PaymentPage = () => {
         city: '',
         zip: '',
     });
+    console.log('shipinfo', shipInfo);
 
     useEffect(() => {
         // 오더번호를 받으면 어디로 갈까?
@@ -40,6 +41,8 @@ const PaymentPage = () => {
 
     const handleFormChange = (event) => {
         //shipInfo에 값 넣어주기
+        const { name, value } = event.target;
+        setShipInfo({ ...shipInfo, [name]: value });
     };
 
     const handlePaymentInfoChange = (event) => {
