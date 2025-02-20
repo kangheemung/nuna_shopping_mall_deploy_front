@@ -7,11 +7,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../features/user/userSlice';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getProductList, deleteProduct, setSelectedProduct } from '../../features/product/productSlice';
+import { getCartQty } from '../../features/cart/cartSlice'; // Make sure to adjust the path if necessary
+import { initialCart } from '../../features/cart/cartSlice';
+
 const Navbar = ({ user }) => {
     const dispatch = useDispatch();
     const [query, setQuery] = useSearchParams();
     const { cartItemCount } = useSelector((state) => state.cart);
-
+    console.log('cartItemCount여길봐 ', cartItemCount);
     const isMobile = window.navigator.userAgent.indexOf('Mobile') !== -1;
     const [showSearchBox, setShowSearchBox] = useState(false);
     const menuList = ['여성', 'Divided', '남성', '신생아/유아', '아동', 'H&M HOME', 'Sale', '지속가능성'];
@@ -41,7 +44,9 @@ const Navbar = ({ user }) => {
     };
     useEffect(() => {
         dispatch(getProductList({ ...searchQuery }));
-    }, [query]);
+        dispatch(getCartQty());
+        dispatch(initialCart());
+    }, [query, cartItemCount]);
 
     useEffect(() => {
         if (searchQuery.name === '') {
@@ -56,6 +61,7 @@ const Navbar = ({ user }) => {
     }, [searchQuery]);
     //console.log('user:,', user);
     //console.log('level:', user?.level);
+
     return (
         <div>
             {showSearchBox && (

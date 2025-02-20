@@ -44,14 +44,22 @@ export const deleteCartItem = createAsyncThunk('cart/deleteCartItem', async (id,
 
 export const updateQty = createAsyncThunk('cart/updateQty', async ({ id, value }, { rejectWithValue }) => {});
 
-export const getCartQty = createAsyncThunk('cart/getCartQty', async (_, { rejectWithValue, dispatch }) => {});
+export const getCartQty = createAsyncThunk('cart/getCartQty', async (_, { rejectWithValue, dispatch }) => {
+    try {
+        const res = await api.get('/cart');
+        if (res.status !== 200) throw new Error(res.error);
+        return res.data.data;
+    } catch (e) {
+        return rejectWithValue(e.error);
+    }
+});
 
 const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
         initialCart: (state) => {
-            state.cartItemCount = 0;
+            state.cartItemCount = getCartList;
         },
         // You can still add reducers here for non-async actions if necessary
     },
