@@ -31,15 +31,11 @@ const OrderReceipt = ({ cartList, totalPrice }) => {
                     <strong>{totalPrice}円</strong>
                 </div>
             </div>
-            {/* {location.pathname.includes("/cart") && cartList.length > 0 && (
-        <Button
-          variant="dark"
-          className="payment-button"
-          onClick={() => navigate("/payment")}
-        >
-          결제 계속하기
-        </Button>
-      )} */}
+            {location.pathname.includes('/cart') && cartList.length > 0 && (
+                <Button variant="dark" className="payment-button" onClick={() => navigate('/payment')}>
+                    결제 계속하기
+                </Button>
+            )}
 
             <div>
                 가능한 결제 수단 귀하가 결제 단계에 도달할 때까지 가격 및 배송료는 확인되지 않습니다.

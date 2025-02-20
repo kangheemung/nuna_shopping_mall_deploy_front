@@ -10,6 +10,7 @@ import { createOrder } from '../../features/order/orderSlice';
 
 const PaymentPage = () => {
     const dispatch = useDispatch();
+
     const { orderNum } = useSelector((state) => state.order);
     const [cardValue, setCardValue] = useState({
         cvc: '',
@@ -47,6 +48,8 @@ const PaymentPage = () => {
 
     const handlePaymentInfoChange = (event) => {
         //카드정보 넣어주기
+        const { name, value } = event.target;
+        setCardValue({ ...cardValue, [name]: value });
     };
 
     const handleInputFocus = (e) => {
@@ -119,6 +122,11 @@ const PaymentPage = () => {
                                 <div className="mobile-receipt-area">{/* <OrderReceipt /> */}</div>
                                 <div>
                                     <h2 className="payment-title">결제 정보</h2>
+                                    <PaymentForm
+                                        cardValue={cardValue}
+                                        handleInputFocus={handleInputFocus}
+                                        handlePaymentInfoChange={handlePaymentInfoChange}
+                                    />
                                 </div>
 
                                 <Button variant="dark" className="payment-button pay-button" type="submit">
