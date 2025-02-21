@@ -28,7 +28,6 @@ const RegisterPage = () => {
             setPasswordError('Password duplication check does not match.');
             return;
         }
-
         //이용약관 동의
         if (!policy) {
             setPolicyError(true);
@@ -38,7 +37,6 @@ const RegisterPage = () => {
         setPolicyError(false);
         dispatch(registerUser({ name, email, password, navigate }));
     };
-
     const handleChange = (event) => {
         event.preventDefault();
         let { id, value, type, checked } = event.target;

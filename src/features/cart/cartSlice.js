@@ -58,7 +58,7 @@ const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        initialCart: (state) => {
+        initialCart(state, action) {
             state.cartItemCount = getCartList;
         },
         // You can still add reducers here for non-async actions if necessary
@@ -91,6 +91,18 @@ const cartSlice = createSlice({
             .addCase(getCartList.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            .addCase(initialCart, (state) => {
+                let newCartItemCount;
+                if (!state.cartList || state.cartList.length === 0) {
+                    state.cartItemCount = 0;
+                } else {
+                    newCartItemCount = state.cartList.reduce(
+                        (total, item) => total + Number(item.productId.price) * item.qty,
+                        0
+                    );
+                    state.cartItemCount = newCartItemCount;
+                }
             });
     },
 });

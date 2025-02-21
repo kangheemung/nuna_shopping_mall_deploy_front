@@ -6,7 +6,6 @@ import CartProductCard from './component/CartProductCard';
 import OrderReceipt from '../PaymentPage/component/OrderReceipt';
 import './style/cart.style.css';
 import { getCartList } from '../../features/cart/cartSlice';
-
 const CartPage = () => {
     const dispatch = useDispatch();
     const { cartList, totalPrice } = useSelector((state) => state.cart);

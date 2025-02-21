@@ -10,7 +10,6 @@ import { createOrder } from '../../features/order/orderSlice';
 
 const PaymentPage = () => {
     const dispatch = useDispatch();
-
     const { orderNum } = useSelector((state) => state.order);
     const [cardValue, setCardValue] = useState({
         cvc: '',
@@ -34,24 +33,25 @@ const PaymentPage = () => {
     useEffect(() => {
         // 오더번호를 받으면 어디로 갈까?
     }, [orderNum]);
-
     const handleSubmit = (event) => {
         event.preventDefault();
         // 오더 생성하기
     };
-
     const handleFormChange = (event) => {
         //shipInfo에 값 넣어주기
         const { name, value } = event.target;
         setShipInfo({ ...shipInfo, [name]: value });
     };
-
     const handlePaymentInfoChange = (event) => {
         //카드정보 넣어주기
         const { name, value } = event.target;
+        if (name === 'expiry') {
+            let newValue = cc_expires_format(value);
+            setCardValue({ ...cardValue, [name]: newValue });
+            return;
+        }
         setCardValue({ ...cardValue, [name]: value });
     };
-
     const handleInputFocus = (e) => {
         setCardValue({ ...cardValue, focus: e.target.name });
     };
