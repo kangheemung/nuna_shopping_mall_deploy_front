@@ -11,7 +11,6 @@ import { getCartQty } from '../../features/cart/cartSlice';
 const Navbar = ({ user }) => {
     const dispatch = useDispatch();
     const [query, setQuery] = useSearchParams();
-
     const isMobile = window.navigator.userAgent.indexOf('Mobile') !== -1;
     const [showSearchBox, setShowSearchBox] = useState(false);
     const menuList = ['여성', 'Divided', '남성', '신생아/유아', '아동', 'H&M HOME', 'Sale', '지속가능성'];
@@ -24,8 +23,7 @@ const Navbar = ({ user }) => {
     const updateSearchQuery = (newSearchQuery) => {
         setQuery({ ...newSearchQuery });
     };
-    const { cartList } = useSelector((state) => state.cart);
-    const cartItemCount = cartList ? cartList.length : 0;
+    const { cartItemCount } = useSelector((state) => state.cart);
 
     console.log('cartItemCountNavber임둥여길봐 ', cartItemCount);
     const onCheckEnter = (event) => {
@@ -37,7 +35,8 @@ const Navbar = ({ user }) => {
     };
 
     const handleLogout = () => {
-        dispatch(logout()); // Dispatch the logout action from userSlice
+        dispatch(logout());
+        // Dispatch the logout action from userSlice
     };
     const handlePageClick = ({ selected }) => {
         setSearchQuery({ ...searchQuery, page: selected + 1 });

@@ -13,12 +13,12 @@ const OrderReceipt = ({ cartList, totalPrice }) => {
             <h3 className="receipt-title">주문 내역</h3>
             <ul className="receipt-list">
                 {cartList.length > 0 &&
-                    cartList.map((item, index) => (
-                        <li key={index}>
+                    cartList.map((item) => (
+                        <li key={item._id}>
                             <div className="display-flex space-between">
-                                <div>{cartList.name}</div>
+                                <div>{item.productId.name}</div>
 
-                                <div>${item.productId.price * item.qty}</div>
+                                <div>${currencyFormat(item.productId.price * item.qty)}</div>
                             </div>
                         </li>
                     ))}
@@ -28,7 +28,7 @@ const OrderReceipt = ({ cartList, totalPrice }) => {
                     <strong>Total:</strong>
                 </div>
                 <div>
-                    <strong>{totalPrice}円</strong>
+                    <strong>{currencyFormat(totalPrice)}円</strong>
                 </div>
             </div>
             {location.pathname.includes('/cart') && cartList.length > 0 && (

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../utils/api';
 import { showToastMessage } from '../common/uiSlice';
+import { DELETE_CART_ITEM_FAIL, DELETE_CART_ITEM_REQUEST } from '../../constants/cart.constants';
 
 const initialState = {
     loading: false,
@@ -40,15 +41,34 @@ export const getCartList = createAsyncThunk('cart/getCartList', async (_, { reje
     }
 });
 
-export const deleteCartItem = createAsyncThunk('cart/deleteCartItem', async (id, { rejectWithValue, dispatch }) => {});
+export const deleteCartItem = createAsyncThunk('cart/deleteCartItem', async (id, { rejectWithValue, dispatch }) => {
+    try {
+        const res = await api.delete(`/cart/${id}`);
+        if (res.status !== 200) {
+            // If the response status is not 200, throw an error
+            throw new Error(res.error);
+        }
+    } catch (error) {
+        return rejectWithValue(error.error);
+    }
+});
 
-export const updateQty = createAsyncThunk('cart/updateQty', async ({ id, value }, { rejectWithValue }) => {});
+export const updateQty = createAsyncThunk('cart/updateQty', async ({ id, value }, { rejectWithValue }) => {
+    try {
+        const res = await api.put(`/cart/${id}`, { qty: value });
+        if (res.status !== 200) throw new Error(res.error);
+        return res.data.data;
+    } catch (e) {
+        return rejectWithValue(e.error);
+    }
+});
 
 export const getCartQty = createAsyncThunk('cart/getCartQty', async (_, { rejectWithValue, dispatch }) => {
     try {
-        const res = await api.get('/cart');
+        const res = await api.get('/cart/qty');
         if (res.status !== 200) throw new Error(res.error);
-        return res.data.data;
+        console.log('Sliceでcart', res.data.qty);
+        return res.data.qty;
     } catch (e) {
         return rejectWithValue(e.error);
     }
@@ -92,17 +112,28 @@ const cartSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
-            .addCase(initialCart, (state) => {
-                let newCartItemCount;
-                if (!state.cartList || state.cartList.length === 0) {
-                    state.cartItemCount = 0;
-                } else {
-                    newCartItemCount = state.cartList.reduce(
-                        (total, item) => total + Number(item.productId.price) * item.qty,
-                        0
-                    );
-                    state.cartItemCount = newCartItemCount;
-                }
+            .addCase(deleteCartItem.pending, (state, action) => {
+                state.loading = true;
+            })
+            .addCase(deleteCartItem.fulfilled, (state, action) => {
+                state.payloadCart = action.payload;
+            })
+            .addCase(deleteCartItem.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(getCartQty.pending, (state, action) => {
+                state.loading = true;
+            })
+            .addCase(getCartQty.fulfilled, (state, action) => {
+                console.log('API Response여기는getCartQty :', action.payload);
+                state.loading = false;
+                state.error = '';
+                state.cartItemCount = action.payload; // Set cartItemCount to the value returned by getCartQty
+            })
+            .addCase(getCartQty.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     },
 });
