@@ -57,7 +57,7 @@ export const updateQty = createAsyncThunk('cart/updateQty', async ({ id, value }
     try {
         const res = await api.put(`/cart/${id}`, { qty: value });
         if (res.status !== 200) throw new Error(res.error);
-        return res.data.data;
+        return;
     } catch (e) {
         return rejectWithValue(e.error);
     }
@@ -125,6 +125,20 @@ const cartSlice = createSlice({
             .addCase(getCartQty.pending, (state, action) => {
                 state.loading = true;
             })
+            .addCase(updateQty.pending, (state, action) => {
+                state.loading = true;
+                state.error = '';
+            })
+
+            .addCase(updateQty.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = '';
+            })
+            .addCase(updateQty.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
             .addCase(getCartQty.fulfilled, (state, action) => {
                 console.log('API Response여기는getCartQty :', action.payload);
                 state.loading = false;
