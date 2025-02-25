@@ -1,12 +1,16 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { currencyFormat } from '../../../utils/number';
+import { useDispatch } from 'react-redux';
+import { editCartItem } from '../../../features/cart/cartSlice';
 
 const OrderReceipt = ({ cartList, totalPrice }) => {
     const location = useLocation();
+
     const navigate = useNavigate();
+    
 
     return (
         <div className="receipt-container">

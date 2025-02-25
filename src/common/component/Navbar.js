@@ -38,14 +38,17 @@ const Navbar = ({ user }) => {
         dispatch(logout());
         // Dispatch the logout action from userSlice
     };
+
     const handlePageClick = ({ selected }) => {
         setSearchQuery({ ...searchQuery, page: selected + 1 });
     };
-    useEffect(() => {
-        dispatch(getProductList({ ...searchQuery }));
-        dispatch(getCartQty());
-    }, [query]);
+    const handleCartNavigation = () => {
+        navigate('/cart');
+    };
 
+    const handleFetchCartQty = () => {
+        dispatch(getCartQty());
+    };
     useEffect(() => {
         if (searchQuery.name === '') {
             delete searchQuery.name;
@@ -55,8 +58,14 @@ const Navbar = ({ user }) => {
         const query = params.toString();
         console.log('qqqquery', query);
         navigate('?' + query);
+        dispatch(getProductList({ ...searchQuery }));
         //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
-    }, [searchQuery]);
+    }, [dispatch, searchQuery, query, navigate]);
+    // 2. カート数量の取得
+    useEffect(() => {
+        dispatch(getCartQty());
+    }, [dispatch]);
+
     //console.log('user:,', user);
     //console.log('level:', user?.level);
 
@@ -109,7 +118,12 @@ const Navbar = ({ user }) => {
                                 {!isMobile && <span style={{ cursor: 'pointer' }}>로그인</span>}
                             </div>
                         )}
-                        <div onClick={() => navigate('/cart')} className="nav-icon">
+                        <div
+                            onClick={() => {
+                                navigate('/cart');
+                                dispatch(getCartQty());
+                            }}
+                            className="nav-icon">
                             <FontAwesomeIcon icon={faShoppingBag} />
                             {!isMobile && <span style={{ cursor: 'pointer' }}>{`쇼핑백(${cartItemCount})`}</span>}
                         </div>

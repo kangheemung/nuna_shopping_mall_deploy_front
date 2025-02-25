@@ -53,15 +53,22 @@ export const deleteCartItem = createAsyncThunk('cart/deleteCartItem', async (id,
     }
 });
 
-export const updateQty = createAsyncThunk('cart/updateQty', async ({ id, value }, { rejectWithValue }) => {
-    try {
-        const res = await api.put(`/cart/${id}`, { qty: value });
-        if (res.status !== 200) throw new Error(res.error);
-        return;
-    } catch (e) {
-        return rejectWithValue(e.error);
+export const updateQty = createAsyncThunk(
+    'cart/updateQty',
+    async ({ id, value }, { rejectWithValue, dispatch, getState }) => {
+        try {
+            const res = await api.put(`/cart/${id}`, { qty: value });
+            if (res.status === 200) {
+                return res.data; // Return the updated data if request is successful
+            } else {
+                throw new Error('Failed to update quantity'); // Throw an error for non-200 status codes
+            }
+        } catch (error) {
+            dispatch(showToastMessage({ message: error.message, status: 'error' }));
+            return rejectWithValue(error.message);
+        }
     }
-});
+);
 
 export const getCartQty = createAsyncThunk('cart/getCartQty', async (_, { rejectWithValue, dispatch }) => {
     try {
@@ -85,7 +92,7 @@ const cartSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(addToCart.pending, (state, action) => {
+            .addCase(addToCart.pending, (state) => {
                 state.loading = true;
             })
             .addCase(addToCart.fulfilled, (state, action) => {
@@ -99,46 +106,45 @@ const cartSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
-            .addCase(getCartList.pending, (state, action) => {
+            .addCase(getCartList.pending, (state) => {
                 state.loading = true;
             })
             .addCase(getCartList.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = '';
                 state.cartList = action.payload;
-                state.totalPrice = action.payload.reduce((total, item) => total + item.productId.price * item.qty, 0); // 選択した製品に関する値段の総価格。
             })
             .addCase(getCartList.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
-            .addCase(deleteCartItem.pending, (state, action) => {
+            .addCase(deleteCartItem.pending, (state) => {
                 state.loading = true;
             })
             .addCase(deleteCartItem.fulfilled, (state, action) => {
-                state.payloadCart = action.payload;
+                state.cartList = action.payload;
             })
             .addCase(deleteCartItem.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
-            .addCase(getCartQty.pending, (state, action) => {
-                state.loading = true;
-            })
-            .addCase(updateQty.pending, (state, action) => {
+
+            .addCase(updateQty.pending, (state) => {
                 state.loading = true;
                 state.error = '';
             })
-
             .addCase(updateQty.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = '';
+                state.updatedItem = action.payload;
             })
             .addCase(updateQty.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
-
+            .addCase(getCartQty.pending, (state) => {
+                state.loading = true;
+            })
             .addCase(getCartQty.fulfilled, (state, action) => {
                 console.log('API Response여기는getCartQty :', action.payload);
                 state.loading = false;

@@ -7,10 +7,13 @@ import { currencyFormat } from '../../../utils/number';
 import { updateQty, deleteCartItem } from '../../../features/cart/cartSlice';
 const CartProductCard = ({ item }) => {
     const dispatch = useDispatch();
-    const [quantity, setQuantity] = useState(item.qty);
+    const [totalPrice, setTotalPrice] = useState(currencyFormat(item.productId.price * item.qty));
+
     const handleQtyChange = (id, value) => {
-        setQuantity(value);
-        dispatch(updateQty({ id, quantity: parseInt(value), price: item.productId.price }));
+        console.log('Item ID:', id, 'New Quantity:', value);
+        dispatch(updateQty({ id, value }));
+        const newTotalPrice = currencyFormat(item.productId.price * value);
+        setTotalPrice(newTotalPrice);
     };
 
     const deleteCart = (id) => {
@@ -35,12 +38,13 @@ const CartProductCard = ({ item }) => {
                         <strong>₩ {currencyFormat(item.productId.price)}</strong>
                     </div>
                     <div>Size: {item.size}</div>
-                    <div>Total: ₩ {currencyFormat(item.productId.price * quantity)}</div>
+                    <div>Total: ₩ {totalPrice}</div>
                     <div>
                         Quantity:
                         <Form.Select
                             onChange={(event) => handleQtyChange(item._id, event.target.value)}
-                            value={quantity}
+                            required
+                            defaultValue={item.qty}
                             className="qty-dropdown">
                             <option value={1}>1</option>
                             <option value={2}>2</option>
