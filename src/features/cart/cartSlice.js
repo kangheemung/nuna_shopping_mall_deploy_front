@@ -113,6 +113,9 @@ const cartSlice = createSlice({
                 state.loading = false;
                 state.error = '';
                 state.cartList = action.payload;
+                state.totalPrice=action.payload.reduce(
+                    (total, item) => (total += item.productId.price * item.qty),
+                    0)
             })
             .addCase(getCartList.rejected, (state, action) => {
                 state.loading = false;
@@ -123,6 +126,8 @@ const cartSlice = createSlice({
             })
             .addCase(deleteCartItem.fulfilled, (state, action) => {
                 state.cartList = action.payload;
+                state.totalPrice=action.payload.reduce((total,item)=>(total += item.productId.price * item.qty),
+                0)
             })
             .addCase(deleteCartItem.rejected, (state, action) => {
                 state.loading = false;

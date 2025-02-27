@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../features/user/userSlice';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getProductList, deleteProduct, setSelectedProduct } from '../../features/product/productSlice';
-import { getCartQty } from '../../features/cart/cartSlice';
+import { updateQty, deleteCartItem, getCartQty } from '../../features/cart/cartSlice';
 const Navbar = ({ user }) => {
     const dispatch = useDispatch();
     const [query, setQuery] = useSearchParams();
@@ -38,16 +38,11 @@ const Navbar = ({ user }) => {
         dispatch(logout());
         // Dispatch the logout action from userSlice
     };
-
-    const handlePageClick = ({ selected }) => {
-        setSearchQuery({ ...searchQuery, page: selected + 1 });
-    };
-    const handleCartNavigation = () => {
-        navigate('/cart');
-    };
-
     const handleFetchCartQty = () => {
         dispatch(getCartQty());
+    };
+    const handlePageClick = ({ selected }) => {
+        setSearchQuery({ ...searchQuery, page: selected + 1 });
     };
     useEffect(() => {
         if (searchQuery.name === '') {
@@ -61,6 +56,7 @@ const Navbar = ({ user }) => {
         dispatch(getProductList({ ...searchQuery }));
         //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
     }, [dispatch, searchQuery, query, navigate]);
+
     // 2. カート数量の取得
     useEffect(() => {
         dispatch(getCartQty());
@@ -121,9 +117,10 @@ const Navbar = ({ user }) => {
                         <div
                             onClick={() => {
                                 navigate('/cart');
-                                dispatch(getCartQty());
+                                handleFetchCartQty();
                             }}
                             className="nav-icon">
+                            {' '}
                             <FontAwesomeIcon icon={faShoppingBag} />
                             {!isMobile && <span style={{ cursor: 'pointer' }}>{`쇼핑백(${cartItemCount})`}</span>}
                         </div>
@@ -140,10 +137,8 @@ const Navbar = ({ user }) => {
                 </div>
             </div>
 
-            <div className="nav-logo">
-                <Link to="/">
-                    <img width={100} src="/image/hm-logo.png" alt="hm-logo.png" />
-                </Link>
+            <div className="nav-logo" onClick={() => navigate('/')}>
+                <img width={100} src="/image/hm-logo.png" alt="hm-logo.png" />
             </div>
             <div className="nav-menu-area">
                 <ul className="menu">
