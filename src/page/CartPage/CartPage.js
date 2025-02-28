@@ -1,39 +1,25 @@
-import React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import CartProductCard from './component/CartProductCard';
 import OrderReceipt from '../PaymentPage/component/OrderReceipt';
 import './style/cart.style.css';
-import { getCartList, updateQty, deleteCartItem, getCartQty } from '../../features/cart/cartSlice';
+import { getCartList, updateQty } from '../../features/cart/cartSlice';
 const CartPage = () => {
     const dispatch = useDispatch();
     const { cartList, totalPrice } = useSelector((state) => state.cart);
     console.log('ppcartpage データ', cartList);
-    const handleQtyChange = (id, value) => {
-        console.log('Item ID:', id, 'New Quantity:', value);
-        dispatch(updateQty({ id, value }));
+    useEffect(() => {
+        //카트리스트 불러오기
         dispatch(getCartList());
-    };
-
-    const deleteCart = (id) => {
-        dispatch(deleteCartItem(id));
-    };
-
+    }, []);
 
     return (
         <Container>
             <Row>
                 <Col xs={12} md={7}>
                     {cartList.length > 0 ? (
-                        cartList.map((item) => (
-                            <CartProductCard
-                                item={item}
-                                key={item._id}
-                                handleQtyChange={handleQtyChange}
-                                deleteCart={deleteCart}
-                            />
-                        ))
+                        cartList.map((item) => <CartProductCard item={item} key={item._id} />)
                     ) : (
                         <div className="text-align-center empty-bag">
                             <h2>카트가 비어있습니다.</h2>

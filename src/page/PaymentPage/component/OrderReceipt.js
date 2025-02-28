@@ -4,13 +4,12 @@ import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { currencyFormat } from '../../../utils/number';
 import { useDispatch } from 'react-redux';
-import { updateQty } from '../../../features/cart/cartSlice';
+import { getCartList, updateQty, deleteCartItem, getCartQty } from '../../../features/cart/cartSlice';
 
 const OrderReceipt = ({ cartList, totalPrice }) => {
+    const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
-    const dispatch = useDispatch();
-   
 
     return (
         <div className="receipt-container">

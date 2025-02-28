@@ -4,13 +4,14 @@ import { Row, Col, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch } from 'react-redux';
 import { currencyFormat } from '../../../utils/number';
-
-import { updateQty, deleteCartItem } from '../../../features/cart/cartSlice';
+import { updateQty, deleteCartItem, getCartList } from '../../../features/cart/cartSlice';
 const CartProductCard = ({ item }) => {
     const dispatch = useDispatch();
 
     const handleQtyChange = (id, value) => {
-        dispatch(updateQty(id, value));
+        dispatch(updateQty({ id, value })).then(() => {
+            dispatch(getCartList());
+        });
     };
 
     const deleteCart = (id) => {
@@ -40,16 +41,21 @@ const CartProductCard = ({ item }) => {
                         Quantity:
                         <Form.Select
                             onChange={(event) => {
-                                handleQtyChange(item._id, event.target.value);
+                                handleQtyChange(item._id, parseInt(event.target.value));
                             }}
                             required
                             defaultValue={item.qty}
                             className="qty-dropdown">
-                            {[...Array(10)].map((_, index) => (
-                                <option key={index} value={index + 1}>
-                                    {index + 1}
-                                </option>
-                            ))}
+                            <option value={1}>1</option>
+                            <option value={2}>2</option>
+                            <option value={3}>3</option>
+                            <option value={4}>4</option>
+                            <option value={5}>5</option>
+                            <option value={6}>6</option>
+                            <option value={7}>7</option>
+                            <option value={8}>8</option>
+                            <option value={9}>9</option>
+                            <option value={10}>10</option>
                         </Form.Select>
                     </div>
                 </Col>
