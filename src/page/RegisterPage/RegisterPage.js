@@ -54,7 +54,9 @@ const RegisterPage = () => {
             {registrationError && (
                 <div>
                     <Alert variant="danger" className="error-message">
-                        {registrationError}
+                        {registrationError === 'Existing email or username.'
+                            ? 'すでに登録されているユーザーです。'
+                            : registrationError}
                     </Alert>
                 </div>
             )}

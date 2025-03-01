@@ -50,6 +50,17 @@ export const registerUser = createAsyncThunk(
         } catch (error) {
             //실페 메세지
             //2. 에러값 저장
+            if (
+                error.response &&
+                error.response.status === 400 &&
+                error.response.data.message === 'Duplicate email and name'
+            ) {
+                // Handle specific error message for duplicate email and name
+                dispatch(showToastMessage({ message: 'Email and name combination already exists', status: 'error' }));
+            } else {
+                // For other status code 400 errors
+                dispatch(showToastMessage({ message: 'Failed to register user', status: 'error' }));
+            }
             return rejectWithValue(error.message);
         }
     }
@@ -95,6 +106,7 @@ const userSlice = createSlice({
         logout: (state) => {
             // Add logic here to handle logout functionality and reset user state
             state.user = null;
+            sessionStorage.removeItem('token');
         },
     },
 

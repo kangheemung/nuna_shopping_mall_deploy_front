@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Row, Col, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,13 +9,15 @@ const CartProductCard = ({ item }) => {
     const dispatch = useDispatch();
 
     const handleQtyChange = (id, value) => {
-        dispatch(updateQty({ id, value })).then(() => {
+        dispatch(updateQty({ id, value }))
+        .then(() => {
             dispatch(getCartList());
         });
     };
 
     const deleteCart = (id) => {
         dispatch(deleteCartItem(id));
+        dispatch(getCartList());
     };
 
     return (

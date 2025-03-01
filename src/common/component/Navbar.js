@@ -36,6 +36,8 @@ const Navbar = ({ user }) => {
 
     const handleLogout = () => {
         dispatch(logout());
+       
+        
         // Dispatch the logout action from userSlice
     };
     const handleFetchCartQty = () => {

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CartProductCard from './component/CartProductCard';
 import OrderReceipt from '../PaymentPage/component/OrderReceipt';
 import './style/cart.style.css';
-import { getCartList, updateQty } from '../../features/cart/cartSlice';
+import { getCartList } from '../../features/cart/cartSlice';
 const CartPage = () => {
     const dispatch = useDispatch();
     const { cartList, totalPrice } = useSelector((state) => state.cart);
@@ -18,7 +18,7 @@ const CartPage = () => {
         <Container>
             <Row>
                 <Col xs={12} md={7}>
-                    {cartList.length > 0 ? (
+                    {cartList && cartList.length > 0 ? (
                         cartList.map((item) => <CartProductCard item={item} key={item._id} />)
                     ) : (
                         <div className="text-align-center empty-bag">
