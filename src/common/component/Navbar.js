@@ -117,19 +117,20 @@ const Navbar = ({ user }) => {
                                 {!isMobile && <span style={{ cursor: 'pointer' }}>로그인</span>}
                             </div>
                         )}
-                        <div
-                            onClick={() => {
-                                navigate('/cart');
-                                handleFetchCartQty();
-                            }}
-                            className="nav-icon">
-                            <FontAwesomeIcon icon={faShoppingBag} />
-                            {!isMobile && (user && cartItemCount !== undefined ? (
-        <span style={{ cursor: 'pointer' }}>{`쇼핑백(${cartItemCount})`}</span>
-    ) : (
-        <span style={{ cursor: 'pointer' }}>쇼핑백(0)</span>
-    ))}
-                        </div>
+                        {user && (
+    <div onClick={() => {
+        navigate('/cart');
+        handleFetchCartQty();
+    }} className="nav-icon">
+        <FontAwesomeIcon icon={faShoppingBag} />
+        {!isMobile ? (
+            <span style={{ cursor: 'pointer' }}>{`쇼핑백(${cartItemCount})`}</span>
+        ) : (
+            <span style={{ cursor: 'pointer' }}>쇼핑백(0)</span>
+        )}
+    </div>
+)}
+
                         <div onClick={() => navigate('/account/purchase')} className="nav-icon">
                             <FontAwesomeIcon icon={faBox} />
                             {!isMobile && <span style={{ cursor: 'pointer' }}>내 주문</span>}

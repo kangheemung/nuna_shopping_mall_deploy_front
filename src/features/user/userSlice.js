@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { showToastMessage } from '../common/uiSlice';
 import api from '../../utils/api';
-import { initialCart } from '../cart/cartSlice';
+
 
 export const loginWithEmail = createAsyncThunk(
     'user/loginWithEmail',

@@ -15,12 +15,12 @@ const AppLayout = ({ children }) => {
     const { user } = useSelector((state) => state.user);
     useEffect(() => {
         dispatch(loginWithToken());
-    }, []); //login_check
+    }, [dispatch]); //login_check
     useEffect(() => {
         if (user) {
             dispatch(getCartQty());
         }
-    }, [user]);
+    }, [dispatch,user]);
     return (
         <div>
             <ToastMessage />

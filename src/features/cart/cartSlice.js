@@ -44,12 +44,14 @@ export const getCartList = createAsyncThunk('cart/getCartList', async (_, { reje
 
 export const deleteCartItem = createAsyncThunk('cart/deleteCartItem', async (id, { rejectWithValue, dispatch }) => {
     try {
+        dispatch({ type: DELETE_CART_ITEM_REQUEST });
         const res = await api.delete(`/cart/${id}`);
         if (res.status !== 200) {
             // If the response status is not 200, throw an error
             throw new Error(res.error);
         }
     } catch (error) {
+        dispatch({ type: DELETE_CART_ITEM_FAIL, payload: error });
         return rejectWithValue(error.error);
     }
 });
@@ -74,10 +76,11 @@ export const updateQty = createAsyncThunk(
 export const getCartQty = createAsyncThunk('cart/getCartQty', async (_, { rejectWithValue, dispatch }) => {
     try {
         const res = await api.get('/cart/qty');
-        // if (res.status !== 200) throw new Error(res.error);
+         if (res.status !== 200) throw new Error(res.error);
        // console.log('Sliceでcart', res.data.qty);
         return res.data.qty;
     } catch (e) {
+        dispatch(showToastMessage({ message: e.message, status: 'error' }));
         return rejectWithValue(e.error);
     }
 });

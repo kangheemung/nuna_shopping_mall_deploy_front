@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from './components/ProductCard';
 import { Row, Col, Container } from 'react-bootstrap';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProductList } from '../../features/product/productSlice';
 import ReactPaginate from 'react-paginate';
 const LandingPage = () => {
-    const [query, setQuery] = useSearchParams();
+    const [query] = useSearchParams();
     const [showDialog, setShowDialog] = useState(false);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     // const showProduct = (id) => {
     //     navigate(`/product/${id}`);
     //   };
@@ -19,9 +19,11 @@ const LandingPage = () => {
     });
     const productList = useSelector((state) => state.product.productList);
     const totalPageNum = useSelector((state) => state.product.totalPageNum);
+
     useEffect(() => {
         dispatch(getProductList({ ...searchQuery }));
     }, [searchQuery]);
+
     const handlePageClick = ({ selected }) => {
         //  쿼리에 페이지값 바꿔주기
         console.log('selected', selected);
