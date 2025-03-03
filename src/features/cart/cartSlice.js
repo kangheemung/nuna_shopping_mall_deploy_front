@@ -23,7 +23,7 @@ export const addToCart = createAsyncThunk('cart/addToCart', async ({ id, size },
                 status: 'success',
             })
         );
-        console.log('カーとデータを見ましょう', res.data);
+       // console.log('カーとデータを見ましょう', res.data);
         return res.data.cartItemQty; //todo!
     } catch (e) {
         dispatch(showToastMessage({ message: e.error, status: 'error' }));
@@ -35,7 +35,7 @@ export const getCartList = createAsyncThunk('cart/getCartList', async (_, { reje
     try {
         const res = await api.get('/cart');
         if (res.status !== 200) throw new Error(res.error);
-        console.log('Cart data보자 :', res.data);
+        console.log('Cart data보자 :', res.data.data);
         return res.data.data;
     } catch (e) {
         return rejectWithValue(e.error);
@@ -74,8 +74,8 @@ export const updateQty = createAsyncThunk(
 export const getCartQty = createAsyncThunk('cart/getCartQty', async (_, { rejectWithValue, dispatch }) => {
     try {
         const res = await api.get('/cart/qty');
-        if (res.status !== 200) throw new Error(res.error);
-        console.log('Sliceでcart', res.data.qty);
+        // if (res.status !== 200) throw new Error(res.error);
+       // console.log('Sliceでcart', res.data.qty);
         return res.data.qty;
     } catch (e) {
         return rejectWithValue(e.error);
@@ -88,6 +88,7 @@ const cartSlice = createSlice({
     reducers: {
         initialCart(state, action) {
             state.cartItemCount = getCartList;
+            
         },
         // You can still add reducers here for non-async actions if necessary
     },

@@ -9,17 +9,16 @@ const CartProductCard = ({ item }) => {
     const dispatch = useDispatch();
 
     const handleQtyChange = (id, value) => {
-        dispatch(updateQty({ id, value }))
-        .then(() => {
+        dispatch(updateQty({ id, value })).then(() => {
             dispatch(getCartList());
         });
     };
 
-    const deleteCart = (id) => {
-        dispatch(deleteCartItem(id));
+    const deleteCart = async (id) => {
+       dispatch(deleteCartItem(id)).then(() => {
         dispatch(getCartList());
+    });
     };
-
     return (
         <div className="product-card-cart">
             <Row>

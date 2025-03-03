@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../features/user/userSlice';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getProductList, deleteProduct, setSelectedProduct } from '../../features/product/productSlice';
-import { updateQty, deleteCartItem, getCartQty } from '../../features/cart/cartSlice';
+import {getCartList,updateQty, getCartQty } from '../../features/cart/cartSlice';
 const Navbar = ({ user }) => {
     const dispatch = useDispatch();
     const [query, setQuery] = useSearchParams();
@@ -36,33 +36,34 @@ const Navbar = ({ user }) => {
 
     const handleLogout = () => {
         dispatch(logout());
-       
-        
+        sessionStorage.removeItem('token');
+        navigate('/');
+
         // Dispatch the logout action from userSlice
     };
     const handleFetchCartQty = () => {
+       
         dispatch(getCartQty());
     };
     const handlePageClick = ({ selected }) => {
         setSearchQuery({ ...searchQuery, page: selected + 1 });
     };
     useEffect(() => {
-        if (searchQuery.name === '') {
-            delete searchQuery.name;
-        }
-        console.log('qqq', searchQuery);
+        //console.log('qqq', searchQuery);
         const params = new URLSearchParams(searchQuery);
         const query = params.toString();
-        console.log('qqqquery', query);
-        navigate('?' + query);
+        //console.log('qqqquery', query);
+        // const path = query ? `?${query}` : '/';
+        // navigate(path);
         dispatch(getProductList({ ...searchQuery }));
         //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
-    }, [dispatch, searchQuery, query, navigate]);
+    }, [searchQuery]);
 
     // 2. カート数量の取得
     useEffect(() => {
-        dispatch(getCartQty());
-    }, [dispatch]);
+        dispatch(getCartList());
+        dispatch(updateQty());
+    }, []);
 
     //console.log('user:,', user);
     //console.log('level:', user?.level);
@@ -94,7 +95,7 @@ const Navbar = ({ user }) => {
                 </div>
             </div>
             {user && user.level === 'admin' && (
-                <Link to="/admin/product?page=1" className="link-area">
+                <Link to="/admin/product?" className="link-area">
                     Admin page
                 </Link>
             )}
@@ -122,9 +123,12 @@ const Navbar = ({ user }) => {
                                 handleFetchCartQty();
                             }}
                             className="nav-icon">
-                            {' '}
                             <FontAwesomeIcon icon={faShoppingBag} />
-                            {!isMobile && <span style={{ cursor: 'pointer' }}>{`쇼핑백(${cartItemCount})`}</span>}
+                            {!isMobile && (user && cartItemCount !== undefined ? (
+        <span style={{ cursor: 'pointer' }}>{`쇼핑백(${cartItemCount})`}</span>
+    ) : (
+        <span style={{ cursor: 'pointer' }}>쇼핑백(0)</span>
+    ))}
                         </div>
                         <div onClick={() => navigate('/account/purchase')} className="nav-icon">
                             <FontAwesomeIcon icon={faBox} />

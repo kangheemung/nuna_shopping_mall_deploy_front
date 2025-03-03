@@ -10,6 +10,9 @@ const LandingPage = () => {
     const [showDialog, setShowDialog] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    // const showProduct = (id) => {
+    //     navigate(`/product/${id}`);
+    //   };
     const [searchQuery, setSearchQuery] = useState({
         page: query.get('page') || 1,
         name: query.get('name') || '',
@@ -30,7 +33,7 @@ const LandingPage = () => {
                 {productList && productList.length > 0 ? (
                     productList.map((item) => (
                         <Col md={3} sm={12} key={item._id}>
-                            <ProductCard item={item} />
+                            <ProductCard item={item}  />
                         </Col>
                     ))
                 ) : (

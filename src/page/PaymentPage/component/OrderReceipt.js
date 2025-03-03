@@ -14,12 +14,11 @@ const OrderReceipt = ({ cartList, totalPrice }) => {
         <div className="receipt-container">
             <h3 className="receipt-title">주문 내역</h3>
             <ul className="receipt-list">
-                {cartList.length > 0 &&
+            {cartList && cartList.length > 0 &&
                     cartList.map((item, index) => (
                         <li key={index}>
                             <div className="display-flex space-between">
                                 <div>{item.productId.name}</div>
-
                                 <div>${currencyFormat(item.productId.price * item.qty)}</div>
                             </div>
                         </li>
@@ -33,7 +32,7 @@ const OrderReceipt = ({ cartList, totalPrice }) => {
                     <strong>{currencyFormat(totalPrice)}円</strong>
                 </div>
             </div>
-            {location.pathname.includes('/cart') && cartList.length > 0 && (
+            {location.pathname.includes('/cart') && cartList && cartList.length > 0 && (
                 <Button variant="dark" className="payment-button" onClick={() => navigate('/payment')}>
                     결제 계속하기
                 </Button>

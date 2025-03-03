@@ -8,8 +8,8 @@ export const getProductList = createAsyncThunk('products/getProductList', async 
     try {
         // Check and ensure non-empty 'name' parameter before constructing the API request
         const response = await api.get('/product', { params: { ...query } });
-        console.log('Query object:', query);
-        console.log('Response Data rrr여기를 보아라', response.data);
+        //console.log('Query object:', query);
+        //console.log('Response Data rrr여기를 보아라', response.data);
         if (response.status !== 200) {
             throw new Error(response.error); // 例: response.data.message は実際のエラーメッセージに置き換える
         }
@@ -37,7 +37,7 @@ export const createProduct = createAsyncThunk(
             const response = await api.post('/product', formData);
             if (response.status !== 200) throw new Error(response.error);
             dispatch(showToastMessage({ message: 'Product creation complete', status: 'success' }));
-            console.log('PRoductrrrr', response);
+            //console.log('PRoductrrrr', response);
             dispatch(getProductList({ page: 1 }));
             return response.data;
         } catch (error) {
@@ -69,7 +69,7 @@ export const editProduct = createAsyncThunk(
                 throw new Error('Product ID is undefined');
             }
             const response = await api.put(`/product/${id}`, formData);
-            console.log('Edited Data:', response.data);
+            //console.log('Edited Data:', response.data);
             if (response.status !== 200) throw new Error(response.error);
             console.log('編集データ', response.data);
             dispatch(getProductList({ page: 1 }));
