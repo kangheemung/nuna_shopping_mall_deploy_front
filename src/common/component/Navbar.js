@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../features/user/userSlice';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getProductList, deleteProduct, setSelectedProduct } from '../../features/product/productSlice';
-import {getCartList,updateQty, getCartQty } from '../../features/cart/cartSlice';
+import { getCartQty ,updateQty} from '../../features/cart/cartSlice';
 const Navbar = ({ user }) => {
     const dispatch = useDispatch();
     const [query, setQuery] = useSearchParams();
@@ -42,8 +42,8 @@ const Navbar = ({ user }) => {
         // Dispatch the logout action from userSlice
     };
     const handleFetchCartQty = () => {
-       
         dispatch(getCartQty());
+        navigate('/cart'); 
     };
     const handlePageClick = ({ selected }) => {
         setSearchQuery({ ...searchQuery, page: selected + 1 });
@@ -61,7 +61,6 @@ const Navbar = ({ user }) => {
 
     // 2. カート数量の取得
     useEffect(() => {
-        dispatch(getCartList());
         dispatch(updateQty());
     }, []);
 
@@ -118,15 +117,12 @@ const Navbar = ({ user }) => {
                             </div>
                         )}
                         {user && (
-    <div onClick={() => {
-        navigate('/cart');
-        handleFetchCartQty();
-    }} className="nav-icon">
+    <div  className="nav-icon">
         <FontAwesomeIcon icon={faShoppingBag} />
         {!isMobile ? (
-            <span style={{ cursor: 'pointer' }}>{`쇼핑백(${cartItemCount})`}</span>
+            <span style={{ cursor: 'pointer' }} onClick={() => handleFetchCartQty()}>{`쇼핑백(${cartItemCount})`}</span>
         ) : (
-            <span style={{ cursor: 'pointer' }}>쇼핑백(0)</span>
+            <span style={{ cursor: 'pointer' }} onClick={() => handleFetchCartQty()}>쇼핑백(0)</span>
         )}
     </div>
 )}

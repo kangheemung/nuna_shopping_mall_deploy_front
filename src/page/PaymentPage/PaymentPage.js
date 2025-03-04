@@ -10,6 +10,7 @@ import { createOrder } from '../../features/order/orderSlice';
 
 const PaymentPage = () => {
     const dispatch = useDispatch();
+    const {  cartList,totalPrice } = useSelector((state) => state.cart);
     const { orderNum } = useSelector((state) => state.order);
     const [cardValue, setCardValue] = useState({
         cvc: '',
@@ -32,10 +33,34 @@ const PaymentPage = () => {
 
     useEffect(() => {
         // 오더번호를 받으면 어디로 갈까?
+        if(firstLoading){
+            setFirstLoading(false);
+        }else{
+            if(orderNum !== ""){
+                navigate("/payment/success")
+
+            }
+        }
     }, [orderNum]);
     const handleSubmit = (event) => {
         event.preventDefault();
-        // 오더 생성하기
+        // 오더 생성하기payloadにどんな
+        console.log("shipinfo",shipInfo);
+        const {firstName,lastName,contact,address,city,zip} = shipInfo;
+        dispatch(createOrder({
+            totalPrice,
+            shipTo: { address, city ,zip},
+            contact:{firstName,lastName},
+            orderList: cartList.map((item)=>{
+                return{
+                    productId: item.productId._id,
+                    price: item.productId.price,
+                    qty:item.qty,
+                    size:item.size,
+
+                }
+            })
+        }))
     };
     const handleFormChange = (event) => {
         //shipInfo에 값 넣어주기
@@ -119,7 +144,7 @@ const PaymentPage = () => {
                                         <Form.Control onChange={handleFormChange} required name="zip" />
                                     </Form.Group>
                                 </Row>
-                                <div className="mobile-receipt-area">{/* <OrderReceipt /> */}</div>
+                                <div className="mobile-receipt-area"><OrderReceipt cartList={cartList}totalPrice={totalPrice}/></div>
                                 <div>
                                     <h2 className="payment-title">결제 정보</h2>
                                     <PaymentForm
@@ -137,7 +162,7 @@ const PaymentPage = () => {
                     </div>
                 </Col>
                 <Col lg={5} className="receipt-area">
-                    {/* <OrderReceipt  /> */}
+                    <OrderReceipt  cartList={cartList}totalPrice={totalPrice}/>
                 </Col>
             </Row>
         </Container>
