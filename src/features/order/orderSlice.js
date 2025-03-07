@@ -22,7 +22,7 @@ const res=await api.post("/order",payload)
 if(res.status!==200) throw new Error(res.error)
 return res.data.orderNum;
     }catch(e){
-      dispatch(showToastMessage({message:error.error,status: "error"}))
+      dispatch(showToastMessage({message:e.error,status: "error"}))
       return rejectWithValue(e.error);
     }
   }
