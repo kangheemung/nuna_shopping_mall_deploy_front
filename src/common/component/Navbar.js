@@ -42,8 +42,9 @@ const Navbar = ({ user }) => {
         // Dispatch the logout action from userSlice
     };
     const handleFetchCartQty = () => {
-        dispatch(getCartQty());
-        navigate('/cart'); 
+        dispatch(getCartQty()).then(() => {
+            navigate('/cart');
+        });
     };
     const handlePageClick = ({ selected }) => {
         setSearchQuery({ ...searchQuery, page: selected + 1 });
@@ -61,7 +62,7 @@ const Navbar = ({ user }) => {
 
     // 2. カート数量の取得
     useEffect(() => {
-        dispatch(updateQty());
+        dispatch(getCartQty());
     }, []);
 
     //console.log('user:,', user);
