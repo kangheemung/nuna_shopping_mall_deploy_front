@@ -18,10 +18,10 @@ export const createOrder = createAsyncThunk(
   "order/createOrder",
   async (payload, { dispatch, rejectWithValue }) => {
     try{
-const res=await api.post("/order",payload)
-if(res.status!==200) throw new Error(res.error)
-dispatch(getCartQty());
-return res.data.orderNum;
+        const res = await api.post("/order",payload)
+        if(res.status!==200) throw new Error(res.error)
+        dispatch(getCartQty());
+        return res.data.orderNum;
     }catch(e){
       dispatch(showToastMessage({message:e.error,status: "error"}))
       return rejectWithValue(e.error);
@@ -31,7 +31,19 @@ return res.data.orderNum;
 
 export const getOrder = createAsyncThunk(
   "order/getOrder",
-  async (_, { rejectWithValue, dispatch }) => {}
+    async (_, { rejectWithValue, dispatch }) => {
+      try{
+        const res = await api.get("/order/me");
+        console.log(res.data,"여기가 겟")
+        if (res.status !== 200) {
+          throw new Error(res.data.error);
+        }
+        return res.data.data;
+    }catch(e){
+      dispatch(showToastMessage({message:e.error,status: "error"}))
+      return rejectWithValue(e.message);
+    }
+  }
 );
 
 export const getOrderList = createAsyncThunk(
@@ -54,15 +66,29 @@ const orderSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(createOrder.pending,(state,action)=>{
+    builder
+    .addCase(createOrder.pending,(state,action)=>{
       state.loading=true;
     })
     .addCase(createOrder.fulfilled,(state,action)=>{
       state.loading=false;
-      state.error=""
+      state.error="";
       state.orderNum=action.payload;
     })
     .addCase(createOrder.rejected,(state,action)=>{
+      state.loading=false;
+      state.error=action.payload;
+    })
+    .addCase(getOrder.pending,(state,action)=>{
+      state.loading=true;
+    })
+    .addCase(getOrder.fulfilled,(state,action)=>{
+      state.loading=false;
+      state.error="";
+      state.orderList = action.payload;
+
+    })
+    .addCase(getOrder.rejected,(state,action)=>{
       state.loading=false;
       state.error=action.payload;
     });

@@ -6,7 +6,7 @@ import { currencyFormat } from '../../../utils/number';
 import { useDispatch } from 'react-redux';
 
 const OrderReceipt = ({ cartList, totalPrice }) => {
-    const dispatch = useDispatch();
+   
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ const OrderReceipt = ({ cartList, totalPrice }) => {
                     <strong>{currencyFormat(totalPrice)}円</strong>
                 </div>
             </div>
-            {location.pathname.includes('/cart') && cartList && cartList.length > 0 && (
+            {location.pathname.includes('/cart') && cartList.length > 0 && (
                 <Button variant="dark" className="payment-button" onClick={() => navigate('/payment')}>
                     결제 계속하기
                 </Button>
