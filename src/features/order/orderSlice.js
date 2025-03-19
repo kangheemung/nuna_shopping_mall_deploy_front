@@ -68,7 +68,7 @@ export const updateOrder = createAsyncThunk(
   async ({ id, status }, { dispatch, rejectWithValue }) => {
     try{
     const response = await api.put(`/order/${id}`, { status });
-    if (response.status !== 200) throw new Error(response.error);
+    if (response.status !== 200) throw new Error(response.data.message);
     return response.data;
   }catch(e) {
     dispatch(showToastMessage({message:e.error,status: "error"}))
