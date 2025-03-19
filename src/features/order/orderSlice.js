@@ -48,11 +48,10 @@ export const getOrder = createAsyncThunk(
 
 export const getOrderList = createAsyncThunk(
   "order/getOrderList",
-  async (query, { rejectWithValue, dispatch }) => {
+  async ( query , { rejectWithValue, dispatch }) => {
     try{
-    const response = await api.get("/order", { params: { ...query }
-    });
-
+    const response = await api.get("/order", { params: {... query} });
+    console.log("Response여기를 봐 data:", response.data); 
     if (response.status !== 200) {
       throw new Error(response.data.error);
     }
@@ -70,7 +69,7 @@ export const updateOrder = createAsyncThunk(
     try{
     const response = await api.put(`/order/${id}`, { status });
     if (response.status !== 200) throw new Error(response.error);
-    return response.data.data;
+    return response.data;
   }catch(e) {
     dispatch(showToastMessage({message:e.error,status: "error"}))
     return rejectWithValue(e.message);
@@ -133,7 +132,7 @@ const orderSlice = createSlice({
     .addCase(updateOrder.fulfilled,(state,action)=>{
       state.loading=false;
       state.error="";
-      state.orderList = action.payload;
+      state.orderList = action.payload.data;
     })
     .addCase(updateOrder.rejected,(state,action)=>{
       state.loading=false;

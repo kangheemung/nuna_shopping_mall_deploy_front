@@ -9,15 +9,15 @@ const OrderTable = ({ header, data, openEditForm }) => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            {header.map((title) => (
-              <th >{title}</th>
+            {header.map((title,index) => (
+              <th key={index}>{title}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {data.length > 0 ? (
             data.map((item, index) => (
-              <tr key={index}  onClick={() => openEditForm(item)}>
+              <tr key={index} onClick={() => openEditForm(item)}>
                 <th>{index}</th>
                 <th>{item.orderNum}</th>
                 <th>{item.createdAt.slice(0, 10)}</th>
@@ -40,7 +40,10 @@ const OrderTable = ({ header, data, openEditForm }) => {
               </tr>
             ))
           ) : (
-            <tr key="no-data">No Data to show</tr>
+            <tr>
+            <td colSpan="7">No Data to show</td>
+            </tr>
+        
           )}
         </tbody>
       </Table>

@@ -11,16 +11,21 @@ import './style/adminOrder.style.css';
 
 const AdminOrderPage = () => {
     const navigate = useNavigate();
-    const searchParams = new URLSearchParams(window.location.search);
+    const [query, setQuery] = useSearchParams();
     const dispatch = useDispatch();
     const { orderList, totalPageNum } = useSelector((state) => state.order);
     const [searchQuery, setSearchQuery] = useState({
-        page: searchParams.get('page') ? parseInt(searchParams.get('page')) : 1,
-        ordernum: searchParams.get('ordernum') || '',
+        page: query.get('page') || 1,
+        ordernum: query.get('ordernum') || '',
     });
     const [open, setOpen] = useState(false);
 
     const tableHeader = ['#', 'Order#', 'Order Date', 'User', 'Order Item', 'Address', 'Total Price', 'Status'];
+
+    useEffect(() => {
+        //상품리스트 가져오기//검색조건들 같이
+        dispatch(getOrderList({ ...searchQuery }));
+    }, [query]);
 
     useEffect(() => {
         if (searchQuery.ordernum === '') {
@@ -28,15 +33,9 @@ const AdminOrderPage = () => {
         }
         const params = new URLSearchParams(searchQuery);
         const queryString = params.toString();
-
+        console.log('qqqquery', queryString);
         navigate('?' + queryString);
-
-        if (searchQuery.ordernum === '') {
-            const { ordernum, ...rest } = searchQuery;
-            dispatch(getOrderList(rest));
-        } else {
-            dispatch(getOrderList(searchQuery));
-        }
+        //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
     }, [searchQuery]);
 
     const openEditForm = (order) => {
@@ -45,8 +44,7 @@ const AdminOrderPage = () => {
     };
 
     const handlePageClick = ({ selected }) => {
-        const updatedSearchQuery = { ...searchQuery, page: selected + 1 };
-        setSearchQuery(updatedSearchQuery);
+        setSearchQuery({ ...searchQuery, page: selected + 1 });
     };
     const handleClose = () => {
         setOpen(false);
