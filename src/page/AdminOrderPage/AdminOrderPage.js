@@ -11,20 +11,16 @@ import './style/adminOrder.style.css';
 
 const AdminOrderPage = () => {
     const navigate = useNavigate();
-    const [query] = useSearchParams();
+    const searchParams = new URLSearchParams(window.location.search);
     const dispatch = useDispatch();
     const { orderList, totalPageNum } = useSelector((state) => state.order);
     const [searchQuery, setSearchQuery] = useState({
-        page: query.get('page') || 1,
-        ordernum: query.get('ordernum') || '',
+        page: searchParams.get('page') ? parseInt(searchParams.get('page')) : 1,
+        ordernum: searchParams.get('ordernum') || '',
     });
     const [open, setOpen] = useState(false);
 
     const tableHeader = ['#', 'Order#', 'Order Date', 'User', 'Order Item', 'Address', 'Total Price', 'Status'];
-
-    useEffect(() => {
-        dispatch(getOrderList({ ...searchQuery }));
-    }, [query]);
 
     useEffect(() => {
         if (searchQuery.ordernum === '') {
@@ -34,7 +30,14 @@ const AdminOrderPage = () => {
         const queryString = params.toString();
 
         navigate('?' + queryString);
-    }, [searchQuery]);
+
+        if (searchQuery.ordernum === '') {
+            const { ordernum, ...rest } = searchQuery;
+            dispatch(getOrderList(rest));
+        } else {
+            dispatch(getOrderList(searchQuery));
+        }
+    }, [searchQuery, dispatch, navigate]);
 
     const openEditForm = (order) => {
         setOpen(true);
@@ -42,9 +45,9 @@ const AdminOrderPage = () => {
     };
 
     const handlePageClick = ({ selected }) => {
-        setSearchQuery({ ...searchQuery, page: selected + 1 });
+        const updatedSearchQuery = { ...searchQuery, page: selected + 1 };
+        setSearchQuery(updatedSearchQuery);
     };
-
     const handleClose = () => {
         setOpen(false);
     };
@@ -58,6 +61,7 @@ const AdminOrderPage = () => {
                         setSearchQuery={setSearchQuery}
                         placeholder="오더번호"
                         field="ordernum"
+
                     />
                 </div>
 
