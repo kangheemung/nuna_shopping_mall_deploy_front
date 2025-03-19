@@ -37,7 +37,7 @@ const AdminOrderPage = () => {
         } else {
             dispatch(getOrderList(searchQuery));
         }
-    }, [searchQuery, dispatch, navigate]);
+    }, [searchQuery]);
 
     const openEditForm = (order) => {
         setOpen(true);
