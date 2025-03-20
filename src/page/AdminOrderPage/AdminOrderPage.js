@@ -13,6 +13,9 @@ const AdminOrderPage = () => {
     const navigate = useNavigate();
     const [query, setQuery] = useSearchParams();
     const dispatch = useDispatch();
+    const totalItems = 100; // Example total items
+    const itemsPerPage = 10; // Example items per page
+    const pageCount = Math.ceil(totalItems / itemsPerPage);
     const { orderList, totalPageNum } = useSelector((state) => state.order);
     const [searchQuery, setSearchQuery] = useState({
         page: query.get('page') || 1,
@@ -41,6 +44,7 @@ const AdminOrderPage = () => {
     const openEditForm = (order) => {
         setOpen(true);
         dispatch(setSelectedOrder(order));
+       
     };
 
     const handlePageClick = ({ selected }) => {
@@ -59,7 +63,6 @@ const AdminOrderPage = () => {
                         setSearchQuery={setSearchQuery}
                         placeholder="오더번호"
                         field="ordernum"
-
                     />
                 </div>
 
@@ -87,7 +90,7 @@ const AdminOrderPage = () => {
                 />
             </Container>
 
-            {open && <OrderDetailDialog open={open} handleClose={handleClose} />}
+            {open && <OrderDetailDialog open={open} handleClose={handleClose} searchQuery={searchQuery} />}
         </div>
     );
 };

@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { Form, Modal, Button, Col, Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { ORDER_STATUS } from "../../../constants/order.constants";
 import { currencyFormat } from "../../../utils/number";
-import {getOrderList, updateOrder } from "../../../features/order/orderSlice";
+import {getOrderList,updateOrder } from "../../../features/order/orderSlice";
 
-const OrderDetailDialog = ({ open, handleClose }) => {
+const OrderDetailDialog = ({ open, handleClose , searchQuery}) => {
   const selectedOrder = useSelector((state) => state.order.selectedOrder);
   const [orderStatus, setOrderStatus] = useState(selectedOrder.status);
   const dispatch = useDispatch();
@@ -15,12 +15,12 @@ const OrderDetailDialog = ({ open, handleClose }) => {
   };
   const submitStatus = () => {
     dispatch(updateOrder({ id: selectedOrder._id, status: orderStatus }))
-    .then(() => {
-      handleClose();
-      dispatch(getOrderList());
-    });
-
+      .then(() => {
+        dispatch(getOrderList({ ...searchQuery }));
+        handleClose();
+      });
   };
+ 
 
   if (!selectedOrder) {
     return <></>;
@@ -74,9 +74,9 @@ const OrderDetailDialog = ({ open, handleClose }) => {
           </Table>
         </div>
         <Form onSubmit={(e) => {
-  e.preventDefault(); 
-  submitStatus(); 
-}}>
+          e.preventDefault();
+          submitStatus();
+        }}>
 
           <Form.Group as={Col} controlId="status">
             <Form.Label>Status</Form.Label>

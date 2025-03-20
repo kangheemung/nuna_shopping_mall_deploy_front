@@ -43,7 +43,6 @@ const OrderTable = ({ header, data, openEditForm }) => {
             <tr>
             <td colSpan="7">No Data to show</td>
             </tr>
-        
           )}
         </tbody>
       </Table>

@@ -39,6 +39,7 @@ export const getOrder = createAsyncThunk(
           throw new Error(res.data.error);
         }
         return res.data;
+        
     }catch(e){
       dispatch(showToastMessage({message:e.error,status: "error"}))
       return rejectWithValue(e.message);
@@ -51,7 +52,7 @@ export const getOrderList = createAsyncThunk(
   async ( query , { rejectWithValue, dispatch }) => {
     try{
     const response = await api.get("/order", { params: {... query} });
-    console.log("Response여기를 봐 data:", response.data); 
+    //console.log("Response여기를 봐 data:", response.data); 
     if (response.status !== 200) {
       throw new Error(response.data.error);
     }
@@ -68,13 +69,18 @@ export const updateOrder = createAsyncThunk(
   async ({ id, status }, { dispatch, rejectWithValue }) => {
     try{
     const response = await api.put(`/order/${id}`, { status });
-    if (response.status !== 200) throw new Error(response.data.message);
-    return response.data;
+    if (response.status === 200) {
+      return  response.data;
+      dispatch(getOrderList());
+
+    } else {
+      throw new Error(response.data.message || "Unknown error");
+    }
   }catch(e) {
-    dispatch(showToastMessage({message:e.error,status: "error"}))
+    dispatch(showToastMessage({message: e.message,status: "error"}))
     return rejectWithValue(e.message);
   }
-}
+  }
 );
 
 // Order slice
@@ -84,6 +90,7 @@ const orderSlice = createSlice({
   reducers: {
     setSelectedOrder: (state, action) => {
       state.selectedOrder = action.payload;
+  
     },
   },
   extraReducers: (builder) => {
@@ -126,13 +133,18 @@ const orderSlice = createSlice({
       state.loading=false;
       state.error=action.payload;
     })
-    .addCase(updateOrder.pending,(state,action)=>{
-      state.loading=true;
+    .addCase(updateOrder.pending,(state)=>{
+      state.loading = true;
+      state.error = "";
     })
-    .addCase(updateOrder.fulfilled,(state,action)=>{
+    .addCase(updateOrder.fulfilled, (state, action) => {
       state.loading=false;
       state.error="";
-      state.orderList = action.payload.data;
+      const updatedOrderIndex = state.orderList.findIndex(order => order._id === action.payload._id);
+      if (updatedOrderIndex !== -1) {
+        state.orderList[updatedOrderIndex] = action.payload; // Update the order with the new data
+      }
+      state.totalPageNum=action.payload.totalPageNum
     })
     .addCase(updateOrder.rejected,(state,action)=>{
       state.loading=false;
