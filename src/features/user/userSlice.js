@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { showToastMessage } from '../common/uiSlice';
 import api from '../../utils/api';
 
-
 export const loginWithEmail = createAsyncThunk(
     'user/loginWithEmail',
     async ({ email, password }, { rejectWithValue }) => {
@@ -25,6 +24,9 @@ export const loginWithEmail = createAsyncThunk(
 
 export const loginWithGoogle = createAsyncThunk('/user/loginWithGoogle', async (token, { rejectWithValue }) => {
     try {
+        const res = await api.post('/auth/google', { token });
+        if (res.status !== 200) throw new Error(res.error);
+        return res.data.user;
         // Add logic to handle Google login here
     } catch (error) {
         return rejectWithValue(error.message);
@@ -141,6 +143,19 @@ const userSlice = createSlice({
 
             .addCase(loginWithToken.fulfilled, (state, action) => {
                 state.user = action.payload.user;
+            })
+            .addCase(loginWithGoogle.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(loginWithGoogle.fulfilled, (state, action) => {
+                state.loading = false;
+                //로딩 스핀어 끄기
+                state.user = action.payload.user;
+                state.loginError = null;
+            })
+            .addCase(loginWithGoogle.rejected, (state, action) => {
+                state.loading = false;
+                state.loginError = action.payload;
             });
     },
 });

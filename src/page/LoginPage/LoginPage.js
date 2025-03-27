@@ -71,13 +71,13 @@ const Login = () => {
                         <p>- Log in with an external account -</p>
 
                         <div className="display-center">
-                            {/*1.구글 로그인 버튼 가져오기 ボタン持ってくるgoogle.login 
+                            {/*1.구글 로그인 버튼 가져오기 ボタン持ってくるgoogle.login
                                 2.Oauth로그인을 위해서 google api ログインのためGoogleAPI持ってぐっる사이트에 가입하고 클라이언트 키 시크릿 키
                                 3.로그인 기능 만들기 ログイン機能作る
                                 4.백엔드에서 로그인 バックアンドでログイントークン情報あげる
-                                 a. 이미 로그인을 한적이 있는 유저 =>로그인 시키고 토큰값 주면 ok
-                                 b. 처음 로그인시도 유저인 경우 
-                                 =>유저 정보 새로 생성 => 토큰 값을 넘기면 끝 
+                                a. 이미 로그인을 한적이 있는 유저 =>로그인 시키고 토큰값 주면 ok
+                                b. 처음 로그인시도 유저인 경우
+                                =>유저 정보 새로 생성 => 토큰 값을 넘기면 끝
                                 */}
                             <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
                                 <GoogleLogin
