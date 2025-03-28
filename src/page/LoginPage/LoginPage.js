@@ -23,6 +23,7 @@ const Login = () => {
 
     const handleGoogleLogin = async (googleData) => {
         //구글 로그인 하기
+        console.log('HHEEYY', googleData);
         dispatch(loginWithGoogle(googleData.credential));
     };
 
@@ -86,6 +87,11 @@ const Login = () => {
                                         console.log('Login Failed');
                                     }}
                                 />
+                                {/* 4.백엔드에서 로그인 하기
+                                토큰 값을 읽어와서 => 유저정보를 뽑아내고 email
+                                a.이미 로그인을 한적이 있는 유저 => 로그인 시키고 토큰값 주면 ok
+                                b.처음 로그인 시도를 한 유저=> 유저정보 먼저 새로생성 => 토큰값
+                                 */}
                             </GoogleOAuthProvider>
                         </div>
                     </div>
