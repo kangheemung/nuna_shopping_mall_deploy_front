@@ -22,10 +22,12 @@ export const loginWithEmail = createAsyncThunk(
     }
 );
 
-export const loginWithGoogle = createAsyncThunk('/user/loginWithGoogle', async (token, { rejectWithValue }) => {
+export const loginWithGoogle = createAsyncThunk(
+    '/user/loginWithGoogle',
+ async (token, { rejectWithValue }) => {
     try {
         const res = await api.post('/auth/google', { token });
-        // sessionStorage.setItem('token', res.data.token);
+        sessionStorage.setItem('token', res.data.token);
         return res.data.user;
         // Add logic to handle Google login here
     } catch (error) {
